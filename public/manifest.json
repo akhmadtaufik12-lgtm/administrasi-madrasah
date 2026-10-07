@@ -1,0 +1,21 @@
+{
+  "name": "Portal Administrasi Guru Madrasah",
+  "short_name": "Guru Madrasah",
+  "description": "Aplikasi Administrasi Guru, Presensi Digital, dan Siaran Pengumuman Madrasah",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e1b4b",
+  "icons": [
+    {
+      "src": "https://api.iconify.design/lucide:school.svg?color=%234f46e5",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "https://api.iconify.design/lucide:school.svg?color=%234f46e5",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

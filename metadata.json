@@ -1,0 +1,8 @@
+{
+  "name": "Remix Administrasi Guru MTs Nurrosidiyah",
+  "description": "Aplikasi Administrasi Madrasah",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#1e1b4b" />
+    <meta name="description" content="Sistem Informasi & Administrasi Terpadu Pembelajaran, Jadwal, Nilai, Kas Keuangan, SPP & Tata Usaha Madrasah" />
+    <meta property="og:title" content="Administrasi Guru & Pembelajaran Madrasah" />
+    <meta property="og:description" content="Sistem Informasi & Administrasi Terpadu Pembelajaran, Jadwal, Nilai, Kas Keuangan, SPP & Tata Usaha Madrasah" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2'><path d='m4 6 8-4 8 4'/><path d='m18 10 4 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8l4-2'/><path d='M14 22v-4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v4'/><path d='M18 5v17'/><path d='M6 5v17'/><circle cx='12' cy='9' r='2'/></svg>" />
+    <title>Administrasi Guru & Pembelajaran Madrasah</title>
+    <!-- Global WebStorage Quota Guard: Protects Firestore and Browser from QuotaExceededError crashes -->
+    <script>
+      (function() {
+        try {
+          if (typeof window !== 'undefined' && window.Storage) {
+            var purgeLegacy = function() {
+              try {
+                var keysToRemove = [];
+                for (var i = 0; i < localStorage.length; i++) {
+                  var k = localStorage.key(i);
+                  if (k && (k.indexOf('firestore_') === 0 || k.indexOf('sequence_number') !== -1 || k.indexOf('mts_db_snapshots_') === 0 || k === 'mts_manbaul_database_backups_v1')) {
+                    keysToRemove.push(k);
+                  }
+                }
+                for (var j = 0; j < keysToRemove.length; j++) {
+                  localStorage.removeItem(keysToRemove[j]);
+                }
+              } catch (e) {}
+            };
+            purgeLegacy();
+
+            var origSetItem = Storage.prototype.setItem;
+            Storage.prototype.setItem = function(key, val) {
+              try {
+                origSetItem.call(this, key, val);
+              } catch (err) {
+                if (err && (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014 || String(err).indexOf('quota') !== -1)) {
+                  console.warn('[Storage Protection] Quota reached when setting: ' + key);
+                  purgeLegacy();
+                  try {
+                    origSetItem.call(this, key, val);
+                  } catch (retryErr) {
+                    // Safely absorb so it does not crash Firestore AsyncQueue or application
+                    console.warn('[Storage Protection] Safely absorbed QuotaExceededError for: ' + key);
+                  }
+                } else {
+                  throw err;
+                }
+              };
+            };
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-indigo-500 selection:text-white">
+    <div id="root"></div>
+
+    <!-- Service Worker Registration for Web Push Notifications -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(function(registration) {
+              console.log('✅ ServiceWorker Registered successfully:', registration.scope);
+            })
+            .catch(function(err) {
+              console.log('⚠️ ServiceWorker registration note:', err);
+            });
+        });
+      }
+    </script>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

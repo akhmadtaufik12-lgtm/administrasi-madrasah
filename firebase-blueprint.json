@@ -1,0 +1,393 @@
+{
+  "entities": {
+    "AttendanceSession": {
+      "title": "Attendance Session",
+      "description": "Real-time attendance session recorded by a teacher for a class and subject",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "teacherId": { "type": "string" },
+        "teacherName": { "type": "string" },
+        "teacherNip": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "subjectName": { "type": "string" },
+        "className": { "type": "string" },
+        "meetingNumber": { "type": "number" },
+        "periodNumber": { "type": "string" },
+        "topic": { "type": "string" },
+        "competency": { "type": "string" },
+        "teachingNotes": { "type": "string" },
+        "entries": { "type": "array" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "date", "teacherId", "subjectId", "className", "entries"]
+    },
+    "GradeRecord": {
+      "title": "Grade Record",
+      "description": "Student grades recorded for a class and subject",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "className": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "subjectName": { "type": "string" },
+        "semester": { "type": "string" },
+        "academicYear": { "type": "string" },
+        "grades": { "type": "array" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "className", "subjectId"]
+    },
+    "LessonPlan": {
+      "title": "Lesson Plan",
+      "description": "Modul Ajar / RPP lesson plan",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "teacherId": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "subjectName": { "type": "string" },
+        "className": { "type": "string" },
+        "topic": { "type": "string" },
+        "timeAllocation": { "type": "string" },
+        "learningObjectives": { "type": "array" },
+        "activities": { "type": "object" },
+        "assessment": { "type": "string" },
+        "mediaAndTools": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "subjectId", "className", "topic"]
+    },
+    "PaymentTransaction": {
+      "title": "Payment Transaction",
+      "description": "Student school fee and tuition payment transaction record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "invoiceNumber": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "className": { "type": "string" },
+        "nisn": { "type": "string" },
+        "parentPhone": { "type": "string" },
+        "category": { "type": "string" },
+        "categoryLabel": { "type": "string" },
+        "month": { "type": "string" },
+        "academicYear": { "type": "string" },
+        "amount": { "type": "number" },
+        "totalBillAmount": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "paymentDate": { "type": "string" },
+        "status": { "type": "string" },
+        "receivedBy": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "invoiceNumber", "studentId", "studentName", "className", "category", "amount", "paymentDate", "status", "receivedBy", "createdAt"]
+    },
+    "StudentViolation": {
+      "title": "Student Violation",
+      "description": "Student discipline violation and counseling record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "className": { "type": "string" },
+        "date": { "type": "string" },
+        "violationType": { "type": "string" },
+        "category": { "type": "string" },
+        "points": { "type": "number" },
+        "reporterName": { "type": "string" },
+        "description": { "type": "string" },
+        "followUpNote": { "type": "string" },
+        "status": { "type": "string" },
+        "handledByWaliKelas": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "studentId", "studentName", "className", "date", "violationType", "points", "status", "createdAt"]
+    },
+    "CashDepositTransaction": {
+      "title": "Cash Deposit Transaction",
+      "description": "Cash deposit handover from Bendahara 1-5 to Bendahara Utama",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "depositNumber": { "type": "string" },
+        "fromTreasurerId": { "type": "string" },
+        "fromTreasurerName": { "type": "string" },
+        "fromTreasurerRole": { "type": "string" },
+        "toTreasurerId": { "type": "string" },
+        "toTreasurerName": { "type": "string" },
+        "toTreasurerRole": { "type": "string" },
+        "amount": { "type": "number" },
+        "depositDate": { "type": "string" },
+        "notes": { "type": "string" },
+        "receiptNumber": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "fromTreasurerId", "fromTreasurerName", "toTreasurerId", "toTreasurerName", "amount", "depositDate", "status", "createdAt"]
+    },
+    "TreasurerExpenseTransaction": {
+      "title": "Treasurer Expense Transaction",
+      "description": "Expense transaction recorded by school treasurer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "expenseNumber": { "type": "string" },
+        "treasurerId": { "type": "string" },
+        "treasurerName": { "type": "string" },
+        "category": { "type": "string" },
+        "amount": { "type": "number" },
+        "expenseDate": { "type": "string" },
+        "recipient": { "type": "string" },
+        "description": { "type": "string" },
+        "receiptNumber": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "expenseNumber", "treasurerId", "category", "amount", "expenseDate", "description", "createdAt"]
+    },
+    "TeachingSchedule": {
+      "title": "Teaching Schedule",
+      "description": "Master teaching schedule per teacher, subject, class, day, and period",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "day": { "type": "string" },
+        "periodNumber": { "type": "string" },
+        "periodStartHour": { "type": "number" },
+        "periodEndHour": { "type": "number" },
+        "teacherId": { "type": "string" },
+        "teacherName": { "type": "string" },
+        "teacherNip": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "subjectName": { "type": "string" },
+        "subjectCode": { "type": "string" },
+        "className": { "type": "string" },
+        "academicYear": { "type": "string" },
+        "semester": { "type": "string" },
+        "room": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "day", "periodNumber", "teacherId", "subjectId", "className", "createdAt"]
+    },
+    "SuratKeluar": {
+      "title": "Surat Keluar",
+      "description": "Outgoing school official letters and correspondence",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "nomorSurat": { "type": "string" },
+        "kodeKlasifikasi": { "type": "string" },
+        "kategoriSurat": { "type": "string" },
+        "tanggalSurat": { "type": "string" },
+        "lampiran": { "type": "string" },
+        "perihal": { "type": "string" },
+        "tujuanSurat": { "type": "string" },
+        "isiSurat": { "type": "string" },
+        "penandatanganNama": { "type": "string" },
+        "penandatanganNip": { "type": "string" },
+        "penandatanganJabatan": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "nomorSurat", "kodeKlasifikasi", "kategoriSurat", "tanggalSurat", "perihal", "tujuanSurat", "isiSurat", "penandatanganNama", "status", "createdAt"]
+    },
+    "SuratMasuk": {
+      "title": "Surat Masuk",
+      "description": "Incoming school official letters and disposition record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "nomorAgenda": { "type": "string" },
+        "nomorSuratAsal": { "type": "string" },
+        "pengirim": { "type": "string" },
+        "tanggalSurat": { "type": "string" },
+        "tanggalDiterima": { "type": "string" },
+        "perihal": { "type": "string" },
+        "sifat": { "type": "string" },
+        "disposisiStatus": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "nomorAgenda", "nomorSuratAsal", "pengirim", "tanggalSurat", "tanggalDiterima", "perihal", "sifat", "disposisiStatus", "createdAt"]
+    },
+    "SchoolConfig": {
+      "title": "School Config",
+      "description": "Configuration documents for school officials, wali kelas, fee tariffs, admin settings, and student billing",
+      "type": "object",
+      "properties": {
+        "namaSekolah": { "type": "string" },
+        "npsn": { "type": "string" },
+        "nsm": { "type": "string" },
+        "kepalaSekolah": { "type": "object" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "InventoryItem": {
+      "title": "Inventory Item",
+      "description": "School cooperative or inventory goods and stock management",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "unit": { "type": "string" },
+        "buyPrice": { "type": "number" },
+        "sellPrice": { "type": "number" },
+        "currentStock": { "type": "number" },
+        "minStock": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "code", "name", "category", "unit", "buyPrice", "sellPrice", "currentStock"]
+    },
+    "InventoryMovementLog": {
+      "title": "Inventory Movement Log",
+      "description": "Logs of stock ins, outs, sales, and adjustments",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "itemId": { "type": "string" },
+        "itemName": { "type": "string" },
+        "type": { "type": "string" },
+        "quantity": { "type": "number" },
+        "date": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "itemId", "type", "quantity", "date", "createdAt"]
+    },
+    "Teacher": {
+      "title": "Teacher Master Data",
+      "description": "Teacher profile and credentials",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nip": { "type": "string" },
+        "phone": { "type": "string" },
+        "passcode": { "type": "string" },
+        "schoolId": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    },
+    "Subject": {
+      "title": "Subject Master Data",
+      "description": "Curriculum course / subject details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "code": { "type": "string" },
+        "schoolId": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    },
+    "Student": {
+      "title": "Student Master Data",
+      "description": "Student profile, enrollment, and contact data",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nisn": { "type": "string" },
+        "className": { "type": "string" },
+        "schoolId": { "type": "string" }
+      },
+      "required": ["id", "name", "className"]
+    },
+    "Announcement": {
+      "title": "School Announcement",
+      "description": "Broadcast announcements for teachers, parents, and students",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "priority": { "type": "string" },
+        "targetAudience": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "title", "content", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/attendance_sessions/{sessionId}": {
+      "schema": "AttendanceSession",
+      "description": "Stores individual classroom attendance sessions"
+    },
+    "/grade_records/{gradeId}": {
+      "schema": "GradeRecord",
+      "description": "Stores student grade records by class and subject"
+    },
+    "/lesson_plans/{planId}": {
+      "schema": "LessonPlan",
+      "description": "Stores teacher lesson plans / modul ajar"
+    },
+    "/student_payments/{paymentId}": {
+      "schema": "PaymentTransaction",
+      "description": "Stores student fee and tuition payment transaction receipts"
+    },
+    "/cash_deposits/{depositId}": {
+      "schema": "CashDepositTransaction",
+      "description": "Stores cash deposit and handover transactions from collecting treasurers to main treasurer"
+    },
+    "/treasurer_expenses/{expenseId}": {
+      "schema": "TreasurerExpenseTransaction",
+      "description": "Stores expense transaction receipts recorded by school treasurers"
+    },
+    "/student_violations/{violationId}": {
+      "schema": "StudentViolation",
+      "description": "Stores student discipline and counseling logs"
+    },
+    "/teaching_schedules/{scheduleId}": {
+      "schema": "TeachingSchedule",
+      "description": "Stores master school teaching schedules by teacher, class, day, and time slots"
+    },
+    "/surat_keluar/{suratId}": {
+      "schema": "SuratKeluar",
+      "description": "Stores outgoing letters and official correspondence created by Tata Usaha"
+    },
+    "/surat_masuk/{suratId}": {
+      "schema": "SuratMasuk",
+      "description": "Stores incoming letters and headmaster disposition sheets tracked by Tata Usaha"
+    },
+    "/school_configs/{configId}": {
+      "schema": "SchoolConfig",
+      "description": "Stores institutional configs: officials, class_walikelas, fee_tariffs, admin_settings, and student_bill_settings"
+    },
+    "/inventory_items/{itemId}": {
+      "schema": "InventoryItem",
+      "description": "Stores cooperative inventory merchandise stock"
+    },
+    "/inventory_movement_logs/{logId}": {
+      "schema": "InventoryMovementLog",
+      "description": "Stores cooperative merchandise stock transaction history"
+    },
+    "/master_teachers/{teacherId}": {
+      "schema": "Teacher",
+      "description": "Stores synced master teachers records"
+    },
+    "/master_subjects/{subjectId}": {
+      "schema": "Subject",
+      "description": "Stores synced master subjects records"
+    },
+    "/master_students/{studentId}": {
+      "schema": "Student",
+      "description": "Stores synced master student records"
+    },
+    "/announcements/{announcementId}": {
+      "schema": "Announcement",
+      "description": "Stores broadcast school announcements"
+    }
+  }
+}
