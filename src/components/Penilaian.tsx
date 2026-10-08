@@ -217,17 +217,17 @@ export const Penilaian: React.FC<PenilaianProps> = ({
       )}
 
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-slate-900 rounded-xl p-5 text-white shadow-xs border border-indigo-800">
+      <div className="bg-gradient-to-r from-[#073619] via-[#0d5026] to-[#15803d] rounded-xl p-5 text-white shadow-xs border border-emerald-700/60">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-2 text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-1">
-              <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+            <div className="flex items-center space-x-2 text-emerald-200 text-[10px] font-bold uppercase tracking-widest mb-1">
+              <GraduationCap className="w-3.5 h-3.5 text-emerald-300" />
               <span>Buku Nilai & Asesmen Pembelajaran</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black tracking-tight uppercase">
               Penilaian {activeSubject.name} — Kelas {activeClass}
             </h2>
-            <p className="text-xs text-indigo-200/90 mt-0.5">
+            <p className="text-xs text-emerald-100/90 mt-0.5">
               Pengisian Nilai Formatif (F1-F10), Sumatif Harian (S1-S10), STS, dan SAS.
             </p>
           </div>

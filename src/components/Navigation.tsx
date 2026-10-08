@@ -88,28 +88,28 @@ export const Navigation: React.FC<NavigationProps> = ({
       label: 'Jadwal Pelajaran',
       icon: CalendarDays,
       badge: 'MENU UTAMA',
-      badgeColor: 'bg-amber-400 text-indigo-950 font-black tracking-wider'
+      badgeColor: 'bg-amber-400 text-emerald-950 font-black tracking-wider'
     },
     {
       id: 'absensi' as ActiveTab,
       label: 'Absensi & Jurnal KBM',
       icon: ClipboardCheck,
       badge: offlineQueueCount > 0 ? `${offlineQueueCount} Offline` : 'Input KBM',
-      badgeColor: offlineQueueCount > 0 ? 'bg-amber-400 text-slate-950 font-black animate-pulse' : 'bg-emerald-400 text-indigo-950 font-extrabold'
+      badgeColor: offlineQueueCount > 0 ? 'bg-amber-400 text-slate-950 font-black animate-pulse' : 'bg-emerald-400 text-emerald-950 font-extrabold'
     },
     {
       id: 'jurnal' as ActiveTab,
       label: 'Jurnal Mengajar',
       icon: BookMarked,
       badge: `${todaySessionCount} Hari Ini`,
-      badgeColor: 'bg-indigo-300 text-indigo-950 font-bold'
+      badgeColor: 'bg-emerald-300 text-emerald-950 font-bold'
     },
     {
       id: 'matrix' as ActiveTab,
       label: 'Monitoring Matrix',
       icon: LayoutGrid,
       badge: 'Live KBM',
-      badgeColor: 'bg-teal-300 text-indigo-950 font-extrabold'
+      badgeColor: 'bg-teal-300 text-emerald-950 font-extrabold'
     },
   ];
 
@@ -126,7 +126,7 @@ export const Navigation: React.FC<NavigationProps> = ({
       label: 'Menu Wali Kelas',
       icon: UserCheck,
       badge: 'Wali Kelas',
-      badgeColor: 'bg-teal-300 text-indigo-950 font-black'
+      badgeColor: 'bg-teal-300 text-emerald-950 font-black'
     },
     {
       id: 'pembayaran' as ActiveTab,
@@ -211,18 +211,18 @@ export const Navigation: React.FC<NavigationProps> = ({
           isExpanded ? 'justify-between px-4 py-2.5' : 'justify-center py-2.5 px-2'
         } text-xs font-semibold ${
           isActive
-            ? 'bg-indigo-800 text-white border-l-4 border-indigo-400 font-bold shadow-inner'
-            : 'text-indigo-100 hover:bg-indigo-800/70 hover:text-white opacity-85 hover:opacity-100'
+            ? 'bg-[#15803d] text-white border-l-4 border-emerald-300 font-bold shadow-md'
+            : 'text-emerald-100 hover:bg-[#146030]/70 hover:text-white opacity-90 hover:opacity-100'
         }`}
       >
         <div className={`flex items-center ${isExpanded ? 'space-x-3' : 'justify-center w-full'}`}>
           <div className="relative flex items-center justify-center">
             <Icon className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${
-              isActive ? 'text-amber-400' : 'text-indigo-300/80 group-hover:text-indigo-200'
+              isActive ? 'text-amber-300' : 'text-emerald-300/80 group-hover:text-emerald-100'
             }`} />
             {/* Dot indicator when collapsed & active */}
             {!isExpanded && isActive && (
-              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-indigo-900 animate-pulse" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-[#0e4822] animate-pulse" />
             )}
           </div>
           {isExpanded && (
@@ -233,7 +233,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         {isExpanded && tab.badge && (
           <span
             className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-tight shrink-0 ml-1.5 shadow-2xs ${
-              tab.badgeColor || 'bg-indigo-700 text-indigo-100'
+              tab.badgeColor || 'bg-emerald-700 text-emerald-100'
             }`}
           >
             {tab.badge}
@@ -258,23 +258,23 @@ export const Navigation: React.FC<NavigationProps> = ({
         onMouseLeave={() => {
           if (isAutoHide) setIsHovered(false);
         }}
-        className={`bg-indigo-900 text-white flex flex-col h-full border-r border-indigo-800 select-none transition-all duration-300 ease-in-out ${
+        className={`bg-[#0e4822] text-white flex flex-col h-full border-r border-[#146030] select-none transition-all duration-300 ease-in-out ${
           isMobileMenuOpen
             ? 'block fixed inset-y-0 left-0 z-50 w-64 shadow-2xl'
             : isAutoHide
             ? isHovered
-              ? 'fixed inset-y-0 left-0 z-40 w-64 shadow-2xl bg-indigo-900/98 backdrop-blur-md border-r-2 border-indigo-700/80'
+              ? 'fixed inset-y-0 left-0 z-40 w-64 shadow-2xl bg-[#0e4822]/98 backdrop-blur-md border-r-2 border-[#16a34a]/80'
               : 'hidden lg:flex fixed inset-y-0 left-0 z-30 w-16 shadow-md'
             : 'hidden lg:flex shrink-0 w-64'
         }`}
       >
         {/* Brand & Auto-Hide Control Section */}
-        <div className={`border-b border-indigo-800/80 bg-indigo-950/60 transition-all ${
+        <div className={`border-b border-[#146030]/80 bg-[#072d15]/80 transition-all ${
           isExpanded ? 'p-4' : 'p-3 flex flex-col items-center justify-center'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2.5 overflow-hidden">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-700 to-indigo-500 border border-indigo-400/30 flex items-center justify-center text-white font-black text-sm shadow-md shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-600 border border-emerald-400/40 flex items-center justify-center text-white font-black text-sm shadow-md shrink-0">
                 {schoolInitials}
               </div>
               {isExpanded && (
@@ -282,7 +282,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                   <h1 className="text-sm font-extrabold tracking-tight uppercase leading-tight text-white flex items-center space-x-1.5">
                     <span>ADMIN MADRASAH</span>
                   </h1>
-                  <p className="text-[10px] text-indigo-300/90 font-medium truncate" title={activeSchoolName}>
+                  <p className="text-[10px] text-emerald-200/90 font-medium truncate" title={activeSchoolName}>
                     {activeSchoolName}
                   </p>
                 </div>
@@ -294,7 +294,7 @@ export const Navigation: React.FC<NavigationProps> = ({
               <button
                 type="button"
                 onClick={onCloseMobileMenu}
-                className="w-8 h-8 rounded-lg bg-indigo-800/80 hover:bg-indigo-700 text-indigo-200 flex items-center justify-center transition cursor-pointer"
+                className="w-8 h-8 rounded-lg bg-[#146030]/80 hover:bg-[#15803d] text-emerald-100 flex items-center justify-center transition cursor-pointer"
                 title="Tutup Menu"
               >
                 <X className="w-4 h-4" />
@@ -306,7 +306,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                 className={`p-1.5 rounded-lg text-xs transition cursor-pointer flex items-center space-x-1 border ${
                   isAutoHide
                     ? 'bg-amber-400/20 text-amber-300 border-amber-400/40 hover:bg-amber-400/30'
-                    : 'bg-indigo-800/80 text-indigo-200 border-indigo-700 hover:bg-indigo-700'
+                    : 'bg-[#146030]/80 text-emerald-100 border-emerald-700 hover:bg-[#15803d]'
                 }`}
                 title={isAutoHide ? 'Sematkan Menu (Tetap Terbuka)' : 'Aktifkan Mode Sembunyi Otomatis (Auto-Hide)'}
               >
@@ -321,7 +321,7 @@ export const Navigation: React.FC<NavigationProps> = ({
 
           {/* Mode Indicator Pill when Expanded in Auto-Hide */}
           {isExpanded && isAutoHide && !isMobileMenuOpen && (
-            <div className="mt-2.5 pt-2 border-t border-indigo-800/50 flex items-center justify-between text-[10px] text-amber-300/90">
+            <div className="mt-2.5 pt-2 border-t border-[#146030]/50 flex items-center justify-between text-[10px] text-amber-300/90">
               <span className="flex items-center space-x-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
                 <span className="font-semibold">Mode Auto-Hide Aktif</span>
@@ -338,12 +338,12 @@ export const Navigation: React.FC<NavigationProps> = ({
         </div>
 
         {/* Navigation Sections */}
-        <nav className="flex-1 py-3 overflow-y-auto space-y-4 overflow-x-hidden scrollbar-thin scrollbar-thumb-indigo-700">
+        <nav className="flex-1 py-3 overflow-y-auto space-y-4 overflow-x-hidden scrollbar-thin scrollbar-thumb-emerald-700">
           
           {/* Utama Section */}
           <div>
             {isExpanded && (
-              <div className="px-4 mb-1 text-[10px] uppercase tracking-widest text-indigo-300/80 font-bold animate-in fade-in">
+              <div className="px-4 mb-1 text-[10px] uppercase tracking-widest text-emerald-300/80 font-bold animate-in fade-in">
                 Utama
               </div>
             )}
@@ -366,7 +366,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                 </div>
                 {isExpanded && (
                   <div className="flex items-center space-x-1 shrink-0 ml-1">
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-black uppercase bg-emerald-400 text-indigo-950">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-black uppercase bg-emerald-400 text-emerald-950">
                       Portal
                     </span>
                     <ExternalLink className="w-3.5 h-3.5 text-emerald-300 opacity-80" />
@@ -390,7 +390,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                 </div>
                 {isExpanded && (
                   <div className="flex items-center space-x-1 shrink-0 ml-1">
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-black uppercase bg-amber-400 text-indigo-950">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-black uppercase bg-amber-400 text-emerald-950">
                       Perpus
                     </span>
                     <ExternalLink className="w-3.5 h-3.5 text-amber-300 opacity-80" />
@@ -403,7 +403,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           {/* Administrasi Section */}
           <div>
             {isExpanded && (
-              <div className="px-4 mb-1 text-[10px] uppercase tracking-widest text-indigo-300/80 font-bold animate-in fade-in">
+              <div className="px-4 mb-1 text-[10px] uppercase tracking-widest text-emerald-300/80 font-bold animate-in fade-in">
                 Administrasi & Data
               </div>
             )}
@@ -415,7 +415,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           {/* Fitur Pintar AI Section */}
           <div>
             {isExpanded && (
-              <div className="px-4 mb-1 text-[10px] uppercase tracking-widest text-indigo-300/80 font-bold animate-in fade-in">
+              <div className="px-4 mb-1 text-[10px] uppercase tracking-widest text-emerald-300/80 font-bold animate-in fade-in">
                 Kecerdasan Buatan
               </div>
             )}
@@ -427,7 +427,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           {/* Layanan Kesiswaan & Kedisiplinan Section */}
           <div>
             {isExpanded && (
-              <div className="px-4 mb-1 text-[10px] uppercase tracking-widest text-indigo-300/80 font-bold animate-in fade-in">
+              <div className="px-4 mb-1 text-[10px] uppercase tracking-widest text-emerald-300/80 font-bold animate-in fade-in">
                 Ekstrakulikuler
               </div>
             )}
@@ -483,7 +483,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         </nav>
 
         {/* Footer / System Status & Toggle Quick Action */}
-        <div className={`bg-indigo-950 border-t border-indigo-800/80 text-xs text-indigo-300 ${
+        <div className={`bg-[#072d15] border-t border-[#146030]/80 text-xs text-emerald-200 ${
           isExpanded ? 'p-3.5' : 'p-2 flex flex-col items-center'
         }`}>
           {isExpanded ? (
@@ -497,20 +497,20 @@ export const Navigation: React.FC<NavigationProps> = ({
                   <button
                     type="button"
                     onClick={onToggleAutoHide}
-                    className="p-1 rounded bg-indigo-900 hover:bg-indigo-800 text-indigo-200 text-[10px] flex items-center space-x-1 cursor-pointer"
+                    className="p-1 rounded bg-[#0e4822] hover:bg-[#146030] text-emerald-200 text-[10px] flex items-center space-x-1 cursor-pointer"
                     title={isAutoHide ? 'Matikan Auto-Hide' : 'Aktifkan Auto-Hide'}
                   >
                     {isAutoHide ? <PinOff className="w-3 h-3 text-amber-400" /> : <Pin className="w-3 h-3" />}
                   </button>
                 )}
-                <span className="bg-indigo-900 px-1.5 py-0.5 rounded text-[10px] text-indigo-200 font-mono">v2.5</span>
+                <span className="bg-[#0e4822] px-1.5 py-0.5 rounded text-[10px] text-emerald-200 font-mono">v2.5</span>
               </div>
             </div>
           ) : (
             <button
               type="button"
               onClick={onToggleAutoHide}
-              className="w-8 h-8 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 flex items-center justify-center transition cursor-pointer"
+              className="w-8 h-8 rounded-lg bg-[#0e4822]/80 hover:bg-[#146030] text-emerald-200 flex items-center justify-center transition cursor-pointer"
               title="Perluas & Kunci Menu"
             >
               <PanelLeftOpen className="w-4 h-4 text-amber-400" />

@@ -638,17 +638,17 @@ export const AbsensiMengajar: React.FC<AbsensiMengajarProps> = ({
       ) : null}
 
       {/* Header Banner for Class Session */}
-      <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-slate-900 rounded-xl p-5 text-white shadow-sm border border-indigo-800 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#073619] via-[#0d5026] to-[#15803d] rounded-xl p-5 text-white shadow-sm border border-emerald-700/60 relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
           <div>
-            <div className="flex items-center space-x-2 text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-1">
-              <ClipboardCheck className="w-3.5 h-3.5 text-indigo-400" />
+            <div className="flex items-center space-x-2 text-emerald-200 text-[10px] font-bold uppercase tracking-widest mb-1">
+              <ClipboardCheck className="w-3.5 h-3.5 text-emerald-300" />
               <span>Formulir Absensi & Jurnal Tatap Muka</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black tracking-tight uppercase">
               Presensi Kelas {activeClass} — {activeSubject.name}
             </h2>
-            <p className="text-xs text-indigo-200/90 mt-0.5">
+            <p className="text-xs text-emerald-100/90 mt-0.5">
               Guru Pengajar: <span className="font-bold text-white">{activeTeacher.name}</span> (NIP: {activeTeacher.nip})
             </p>
           </div>

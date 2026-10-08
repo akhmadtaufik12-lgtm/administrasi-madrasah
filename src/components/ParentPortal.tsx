@@ -657,14 +657,14 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
         {activeStudent ? (
           <>
             {/* Student Profile Card Header */}
-            <div className="bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-5 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="bg-gradient-to-r from-[#073619] via-[#0d5026] to-[#15803d] text-white rounded-2xl p-5 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 border border-emerald-700/60">
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-indigo-500/20 border-2 border-indigo-400/40 rounded-2xl flex items-center justify-center text-white text-xl font-black shrink-0 shadow-inner">
+                <div className="w-14 h-14 bg-emerald-500/20 border-2 border-emerald-400/40 rounded-2xl flex items-center justify-center text-white text-xl font-black shrink-0 shadow-inner">
                   {activeStudent.name.charAt(0)}
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="bg-indigo-400/20 border border-indigo-400/30 text-indigo-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">
+                    <span className="bg-emerald-400/20 border border-emerald-400/30 text-emerald-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">
                       Kelas {activeStudent.className}
                     </span>
                     <span className="text-[11px] text-slate-300 font-semibold">

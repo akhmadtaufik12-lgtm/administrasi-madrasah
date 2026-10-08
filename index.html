@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#1e1b4b" />
+    <meta name="theme-color" content="#15803d" />
     <meta name="description" content="Sistem Informasi & Administrasi Terpadu Pembelajaran, Jadwal, Nilai, Kas Keuangan, SPP & Tata Usaha Madrasah" />
     <meta property="og:title" content="Administrasi Guru & Pembelajaran Madrasah" />
     <meta property="og:description" content="Sistem Informasi & Administrasi Terpadu Pembelajaran, Jadwal, Nilai, Kas Keuangan, SPP & Tata Usaha Madrasah" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2'><path d='m4 6 8-4 8 4'/><path d='m18 10 4 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8l4-2'/><path d='M14 22v-4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v4'/><path d='M18 5v17'/><path d='M6 5v17'/><circle cx='12' cy='9' r='2'/></svg>" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='2'><path d='m4 6 8-4 8 4'/><path d='m18 10 4 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8l4-2'/><path d='M14 22v-4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v4'/><path d='M18 5v17'/><path d='M6 5v17'/><circle cx='12' cy='9' r='2'/></svg>" />
     <title>Administrasi Guru & Pembelajaran Madrasah</title>
     <!-- Global WebStorage Quota Guard: Protects Firestore and Browser from QuotaExceededError crashes -->
     <script>
@@ -55,14 +55,14 @@
       })();
     </script>
   </head>
-  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-indigo-500 selection:text-white">
+  <body class="bg-[#F2FBF5] text-slate-900 antialiased selection:bg-emerald-600 selection:text-white">
     <div id="root"></div>
 
     <!-- Service Worker Registration for Web Push Notifications -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+          navigator.serviceWorker.register('./sw.js')
             .then(function(registration) {
               console.log('✅ ServiceWorker Registered successfully:', registration.scope);
             })

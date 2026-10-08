@@ -84,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
   );
 
   return (
-    <header className="min-h-[64px] sm:h-18 py-1.5 bg-white border-b border-slate-200 flex items-center justify-between px-3 sm:px-6 lg:px-8 shrink-0 sticky top-0 z-30 shadow-xs relative">
+    <header className="min-h-[64px] sm:h-18 py-1.5 bg-white/95 backdrop-blur-md border-b border-emerald-900/10 flex items-center justify-between px-3 sm:px-6 lg:px-8 shrink-0 sticky top-0 z-30 shadow-xs relative">
       
       {/* Left Mobile Toggle, Kunci Portal, School Switcher & Auto-Hide Toggle */}
       <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">

@@ -606,19 +606,19 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
       )}
 
       {/* Header Banner - Simplified */}
-      <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 rounded-3xl p-5 sm:p-7 text-white shadow-xl border border-indigo-800/80 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#073619] via-[#0d5026] to-[#15803d] rounded-3xl p-5 sm:p-7 text-white shadow-xl border border-emerald-700/80 relative overflow-hidden">
         {/* Subtle Background Lighting */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
-        <div className="absolute bottom-0 left-0 w-60 h-60 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none -ml-20 -mb-20"></div>
+        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+        <div className="absolute bottom-0 left-0 w-60 h-60 bg-green-400/20 rounded-full blur-2xl pointer-events-none -ml-20 -mb-20"></div>
 
         <div className="relative z-10 space-y-5">
           {/* Top Bar: Navigation Info & Quick Action Buttons */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-indigo-800/50">
-            <div className="flex items-center space-x-2 text-indigo-300 text-xs font-bold uppercase tracking-wider">
-              <CalendarDays className="w-4 h-4 text-indigo-400" />
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-emerald-600/50">
+            <div className="flex items-center space-x-2 text-emerald-200 text-xs font-bold uppercase tracking-wider">
+              <CalendarDays className="w-4 h-4 text-emerald-300" />
               <span>Jadwal Pelajaran & Mengajar</span>
-              <span className="text-indigo-500">•</span>
-              <span className="text-slate-300 font-semibold">{academicYear} ({semester})</span>
+              <span className="text-emerald-400">•</span>
+              <span className="text-emerald-100 font-semibold">{academicYear} ({semester})</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">

@@ -2366,7 +2366,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC] overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 bg-[#F2FBF5] overflow-hidden">
         
         {/* Top Header */}
         <Header

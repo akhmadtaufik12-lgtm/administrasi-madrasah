@@ -330,7 +330,7 @@ export const WaliKelas: React.FC<WaliKelasProps> = ({
     <div className="space-y-6 pb-12">
       
       {/* Top Banner & Header Controls */}
-      <div className="bg-gradient-to-r from-indigo-900 via-indigo-850 to-blue-900 rounded-2xl p-5 text-white shadow-lg border border-indigo-700/50 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#073619] via-[#0d5026] to-[#15803d] rounded-2xl p-5 text-white shadow-lg border border-emerald-700/60 relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-6 -mr-6 w-48 h-48 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">

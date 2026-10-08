@@ -326,11 +326,11 @@ export const PortalGate: React.FC<PortalGateProps> = ({
   };
 
   return (
-    <div className="min-h-screen sm:min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 flex flex-col justify-between items-center p-3 sm:p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen sm:min-h-screen bg-gradient-to-br from-[#063016] via-[#0b4822] to-[#15803d] text-slate-100 flex flex-col justify-between items-center p-3 sm:p-6 relative overflow-hidden font-sans">
       
       {/* Background Decorative Elements */}
-      <div className="absolute -top-32 -left-32 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-amber-600/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute -top-32 -left-32 w-80 h-80 bg-emerald-400/25 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-green-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
       {/* Top Branding Header & School Switcher */}
       <div className="w-full max-w-6xl text-center z-10 pt-2 sm:pt-4">
@@ -370,7 +370,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase drop-shadow-xs">
           {currentSchoolConfig.name}
         </h1>
-        <p className="text-xs sm:text-sm text-indigo-200/85 font-medium mt-0.5 max-w-2xl mx-auto">
+        <p className="text-xs sm:text-sm text-emerald-100/90 font-medium mt-0.5 max-w-2xl mx-auto">
           {currentSchoolConfig.tagline || 'Portal Administrasi Guru, Kurikulum & Ujian, Bendahara, Wali Siswa & Perpustakaan'}
         </p>
       </div>
@@ -382,11 +382,11 @@ export const PortalGate: React.FC<PortalGateProps> = ({
         <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-white/20 text-slate-800 flex flex-col justify-between hover:shadow-2xl transition">
           <div>
             <div className="flex items-center space-x-2.5 mb-2.5">
-              <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center shrink-0 shadow-2xs">
-                <ShieldCheck className="w-4.5 h-4.5" />
+              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 shadow-2xs">
+                <ShieldCheck className="w-4.5 h-4.5 text-emerald-700" />
               </div>
               <div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full">
+                <span className="text-[9px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                   Akses Utama
                 </span>
                 <h2 className="text-sm font-extrabold text-slate-900 leading-tight">
@@ -456,7 +456,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting || !accessCode.trim()}
-                className="w-full bg-indigo-900 hover:bg-indigo-950 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
+                className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
               >
                 <span>{isSubmitting ? 'Memverifikasi...' : `Masuk ${currentSchoolConfig.shortName}`}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -466,11 +466,11 @@ export const PortalGate: React.FC<PortalGateProps> = ({
         </div>
 
         {/* Card 2: Portal Waka Kurikulum & Ujian (STS / SAS / AM) */}
-        <div className="bg-gradient-to-b from-indigo-950/60 to-slate-900/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-indigo-500/50 text-slate-100 flex flex-col justify-between hover:shadow-2xl hover:border-indigo-400/80 transition ring-1 ring-indigo-500/30">
+        <div className="bg-gradient-to-b from-[#0e4322]/80 to-slate-900/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-emerald-500/40 text-slate-100 flex flex-col justify-between hover:shadow-2xl hover:border-emerald-400/80 transition ring-1 ring-emerald-500/30">
           <div>
             <div className="flex items-center space-x-2.5 mb-2.5">
-              <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/40 flex items-center justify-center shrink-0 shadow-2xs">
-                <CalendarCheck className="w-4.5 h-4.5 text-indigo-400" />
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 flex items-center justify-center shrink-0 shadow-2xs">
+                <CalendarCheck className="w-4.5 h-4.5 text-emerald-400" />
               </div>
               <div>
                 <span className="text-[9px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-500/20 border border-emerald-400/30 px-2 py-0.5 rounded-full">
@@ -529,13 +529,13 @@ export const PortalGate: React.FC<PortalGateProps> = ({
               <button
                 type="submit"
                 disabled={isSubmittingKurikulum}
-                className="w-full bg-gradient-to-r from-indigo-500 to-cyan-600 hover:from-indigo-600 hover:to-cyan-700 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
               >
                 <span>{isSubmittingKurikulum ? 'Membuka...' : 'Buka Portal Kurikulum'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
-              <p className="text-[10px] text-indigo-300/80 text-center font-medium mt-1 flex items-center justify-center space-x-1">
-                <Lock className="w-3 h-3 text-indigo-400 shrink-0" />
+              <p className="text-[10px] text-emerald-300/80 text-center font-medium mt-1 flex items-center justify-center space-x-1">
+                <Lock className="w-3 h-3 text-emerald-400 shrink-0" />
                 <span>Kode akses diatur khusus oleh Super Admin</span>
               </p>
             </form>
@@ -693,7 +693,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
         <div className="inline-flex items-center space-x-3 bg-slate-900/60 px-3.5 py-1 rounded-full border border-slate-800 text-[10px] text-slate-400">
           <span>Portal Utama: <strong className="text-emerald-300 font-mono">Guru & Siswa</strong></span>
           <span>•</span>
-          <span>Kurikulum & Bendahara: <strong className="text-indigo-300">Dikelola Super Admin</strong></span>
+          <span>Kurikulum & Bendahara: <strong className="text-emerald-300">Dikelola Super Admin</strong></span>
         </div>
         <p>© {new Date().getFullYear()} {schoolOfficials?.namaYayasan ? `${schoolOfficials.namaYayasan} • ` : ''}{currentSchoolConfig.name || schoolOfficials?.namaSekolah || 'Madrasah'}</p>
       </div>
