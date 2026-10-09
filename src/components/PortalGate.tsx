@@ -59,6 +59,8 @@ export const PortalGate: React.FC<PortalGateProps> = ({
   });
 
   const currentSchoolConfig = getSchoolConfig(selectedSchool);
+  const displaySchoolName = schoolOfficials?.namaSekolah || currentSchoolConfig.name || 'Madrasah';
+  const displayShortName = schoolOfficials?.namaSekolah || currentSchoolConfig.shortName || 'Madrasah';
 
   // Sync if prop changes
   useEffect(() => {
@@ -368,10 +370,10 @@ export const PortalGate: React.FC<PortalGateProps> = ({
 
         {/* Dynamic School Title */}
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase drop-shadow-xs">
-          {currentSchoolConfig.name}
+          {displaySchoolName}
         </h1>
         <p className="text-xs sm:text-sm text-emerald-100/90 font-medium mt-0.5 max-w-2xl mx-auto">
-          {currentSchoolConfig.tagline || 'Portal Administrasi Guru, Kurikulum & Ujian, Bendahara, Wali Siswa & Perpustakaan'}
+          {schoolOfficials?.tagline || currentSchoolConfig.tagline || 'Portal Administrasi Guru, Kurikulum & Ujian, Bendahara, Wali Siswa & Perpustakaan'}
         </p>
       </div>
 
@@ -396,7 +398,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
             </div>
 
             <p className="text-[11px] text-slate-500 leading-snug mb-3 font-normal">
-              Masuk dengan Kode Guru untuk KBM, atau NISN / Kode Siswa untuk Orang Tua di <strong>{currentSchoolConfig.shortName}</strong>.
+              Masuk dengan Kode Guru untuk KBM, atau NISN / Kode Siswa untuk Orang Tua di <strong>{displayShortName}</strong>.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-2.5">
@@ -419,7 +421,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
                     className={`w-full pl-8 pr-8 py-2 bg-slate-50 border rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 transition ${
                       errorMsg
                         ? 'border-rose-400 focus:ring-rose-500'
-                        : 'border-slate-300 focus:ring-indigo-600 focus:border-indigo-600'
+                        : 'border-slate-300 focus:ring-emerald-600 focus:border-emerald-600'
                     }`}
                   />
 
@@ -446,7 +448,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
                   type="checkbox"
                   checked={rememberDevice}
                   onChange={(e) => setRememberDevice(e.target.checked)}
-                  className="w-3 h-3 text-indigo-600 bg-slate-100 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
+                  className="w-3 h-3 text-emerald-600 bg-slate-100 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer"
                 />
                 <label htmlFor="remember-device" className="text-[10px] font-semibold text-slate-600 cursor-pointer">
                   Ingat perangkat ini
@@ -458,7 +460,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
                 disabled={isSubmitting || !accessCode.trim()}
                 className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
               >
-                <span>{isSubmitting ? 'Memverifikasi...' : `Masuk ${currentSchoolConfig.shortName}`}</span>
+                <span>{isSubmitting ? 'Memverifikasi...' : `Masuk ${displayShortName}`}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </form>
@@ -482,14 +484,14 @@ export const PortalGate: React.FC<PortalGateProps> = ({
               </div>
             </div>
 
-            <p className="text-[11px] text-indigo-100/85 leading-snug mb-3 font-normal">
+            <p className="text-[11px] text-emerald-100/85 leading-snug mb-3 font-normal">
               Pengaturan kegiatan ujian (STS/SAS), pembagian ruang otomatis, jadwal pengawas & cetak kartu peserta.
             </p>
 
             <form onSubmit={handleKurikulumSubmit} className="space-y-2.5">
               <div>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-indigo-300/60">
+                  <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-emerald-300/60">
                     <KeyRound className="w-3.5 h-3.5" />
                   </div>
 
@@ -505,14 +507,14 @@ export const PortalGate: React.FC<PortalGateProps> = ({
                     className={`w-full pl-8 pr-8 py-2 bg-slate-900/90 border rounded-xl text-xs font-bold text-white placeholder:text-slate-400 focus:bg-slate-900 focus:outline-none focus:ring-2 transition ${
                       kurikulumErrorMsg
                         ? 'border-rose-400 focus:ring-rose-500'
-                        : 'border-indigo-400/50 focus:ring-indigo-400 focus:border-indigo-400'
+                        : 'border-emerald-400/50 focus:ring-emerald-400 focus:border-emerald-400'
                     }`}
                   />
 
                   <button
                     type="button"
                     onClick={() => setShowKurikulumCode(!showKurikulumCode)}
-                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-indigo-300/60 hover:text-indigo-200 transition cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-emerald-300/60 hover:text-emerald-200 transition cursor-pointer"
                   >
                     {showKurikulumCode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
@@ -560,7 +562,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
             </div>
 
             <p className="text-[11px] text-amber-100/80 leading-snug mb-3 font-normal">
-              Akses khusus Bendahara {currentSchoolConfig.shortName} untuk SPP, Uang Gedung, Kas & Setoran.
+              Akses khusus Bendahara {displayShortName} untuk SPP, Uang Gedung, Kas & Setoran.
             </p>
 
             <form onSubmit={handleBendaharaSubmit} className="space-y-2.5">
@@ -607,7 +609,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
               <button
                 type="submit"
                 disabled={isSubmittingBendahara || !bendaharaCode.trim()}
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-indigo-950 font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
               >
                 <span>{isSubmittingBendahara ? 'Membuka...' : 'Buka Portal Bendahara'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -621,14 +623,14 @@ export const PortalGate: React.FC<PortalGateProps> = ({
         </div>
 
         {/* Card 4: Portal Perpustakaan Digital */}
-        <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-sky-400/30 text-slate-100 flex flex-col justify-between hover:shadow-2xl hover:border-sky-400/60 transition">
+        <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-emerald-500/30 text-slate-100 flex flex-col justify-between hover:shadow-2xl hover:border-emerald-400/60 transition">
           <div>
             <div className="flex items-center space-x-2.5 mb-2.5">
-              <div className="w-8 h-8 rounded-xl bg-sky-400/20 text-sky-300 border border-sky-400/30 flex items-center justify-center shrink-0 shadow-2xs">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center justify-center shrink-0 shadow-2xs">
                 <Library className="w-4.5 h-4.5" />
               </div>
               <div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-sky-300 bg-sky-500/20 border border-sky-400/30 px-2 py-0.5 rounded-full">
+                <span className="text-[9px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-500/20 border border-emerald-400/30 px-2 py-0.5 rounded-full">
                   Literasi Digital
                 </span>
                 <h2 className="text-sm font-extrabold text-white leading-tight">
@@ -646,7 +648,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
             href="https://perpus-digitalmbi.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs group cursor-pointer"
+            className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs group cursor-pointer"
           >
             <span>Buka Perpustakaan</span>
             <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -695,7 +697,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
           <span>•</span>
           <span>Kurikulum & Bendahara: <strong className="text-emerald-300">Dikelola Super Admin</strong></span>
         </div>
-        <p>© {new Date().getFullYear()} {schoolOfficials?.namaYayasan ? `${schoolOfficials.namaYayasan} • ` : ''}{currentSchoolConfig.name || schoolOfficials?.namaSekolah || 'Madrasah'}</p>
+        <p>© {new Date().getFullYear()} {schoolOfficials?.namaYayasan ? `${schoolOfficials.namaYayasan} • ` : ''}{displaySchoolName}</p>
       </div>
 
     </div>

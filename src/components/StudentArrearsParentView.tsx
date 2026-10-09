@@ -81,7 +81,7 @@ export const StudentArrearsParentView: React.FC<StudentArrearsParentViewProps> =
     }
 
     const message = 
-`*KONFIRMASI PEMBAYARAN SISWA - MTs MANBAUL ISLAM*
+`*KONFIRMASI PEMBAYARAN SISWA - ${(schoolOfficials?.namaSekolah || 'Madrasah').toUpperCase()}*
 -----------------------------------------
 Assalamu’alaikum Ibu/Bapak Bendahara,
 Saya orang tua/wali dari:
@@ -102,14 +102,14 @@ Terima kasih.`;
   const handlePrintStudentBill = () => {
     const bank = billSettings.paymentAccountInfo?.bankName || 'BSI';
     const norek = billSettings.paymentAccountInfo?.accountNumber || '7123456789';
-    const an = billSettings.paymentAccountInfo?.accountHolder || 'MTs MANBAUL ISLAM';
+    const an = billSettings.paymentAccountInfo?.accountHolder || schoolOfficials?.namaSekolah || 'Madrasah';
 
     const htmlContent = `
       <div style="font-family: sans-serif; padding: 25px; color: #0f172a; max-width: 800px; margin: 0 auto;">
         <!-- KOP MADRASAH -->
         <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 18px;">
           <h2 style="margin: 0; font-size: 18px; color: #0f172a;">RINCIAN STATUS ADMINISTRASI KEUANGAN & TUNGGAKAN SISWA</h2>
-          <h3 style="margin: 3px 0 0; font-size: 14px; color: #475569;">MTs MANBAUL ISLAM</h3>
+          <h3 style="margin: 3px 0 0; font-size: 14px; color: #475569;">${(schoolOfficials?.namaSekolah || 'Madrasah').toUpperCase()}</h3>
           <p style="margin: 3px 0 0; font-size: 11px; color: #64748b;">Tahun Pelajaran ${academicYear} • ${semester} • Dicetak Mandiri melalui Portal Orang Tua</p>
         </div>
 
@@ -282,7 +282,7 @@ Terima kasih.`;
         
         {/* Total Kewajiban */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3.5">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
             <DollarSign className="w-6 h-6" />
           </div>
           <div>
@@ -358,10 +358,10 @@ Terima kasih.`;
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="bg-slate-50 p-4 sm:px-6 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Receipt className="w-5 h-5 text-indigo-600" />
+            <Receipt className="w-5 h-5 text-emerald-600" />
             <h3 className="text-sm font-black text-slate-900">Rincian Pos Kewajiban Pembayaran Siswa</h3>
           </div>
-          <span className="text-[11px] font-extrabold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-lg">
+          <span className="text-[11px] font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
             {summary.items.filter(i => i.isPaid).length} dari {summary.items.length} Pos Lunas
           </span>
         </div>
@@ -436,7 +436,7 @@ Terima kasih.`;
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
             <h3 className="text-sm font-black text-slate-900 flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-indigo-600" />
+              <Calendar className="w-4 h-4 text-emerald-600" />
               <span>Status Pembayaran SPP Bulanan (TP {academicYear})</span>
             </h3>
             <p className="text-xs text-slate-500">Pantau status lunas setiap bulan dari Juli hingga Juni</p>
@@ -517,21 +517,21 @@ Terima kasih.`;
       </div>
 
       {/* 4. Rekening Pembayaran Resmi Madrasah */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-5 sm:p-6 shadow-md border border-indigo-800/40 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-800/60 pb-3">
+      <div className="bg-gradient-to-r from-[#063016] via-[#0b4822] to-[#15803d] text-white rounded-2xl p-5 sm:p-6 shadow-md border border-emerald-700/50 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-700/60 pb-3">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center justify-center">
               <CreditCard className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-sm font-black text-white">Rekening Resmi Pembayaran Madrasah</h3>
-              <p className="text-xs text-indigo-200">Transfer bank dapat dilakukan melalui ATM, Mobile Banking, atau Teller</p>
+              <p className="text-xs text-emerald-100">Transfer bank dapat dilakukan melalui ATM, Mobile Banking, atau Teller</p>
             </div>
           </div>
 
           <button
             onClick={() => setShowAccountDetails(!showAccountDetails)}
-            className="text-xs font-bold text-indigo-300 hover:text-white flex items-center space-x-1 cursor-pointer self-start sm:self-auto"
+            className="text-xs font-bold text-emerald-200 hover:text-white flex items-center space-x-1 cursor-pointer self-start sm:self-auto"
           >
             <span>{showAccountDetails ? 'Sembunyikan' : 'Tampilkan Rincian'}</span>
             {showAccountDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -540,10 +540,10 @@ Terima kasih.`;
 
         {showAccountDetails && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-            <div className="bg-slate-800/70 p-4 rounded-xl border border-slate-700/80 space-y-2">
+            <div className="bg-slate-900/80 p-4 rounded-xl border border-emerald-800/60 space-y-2">
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400">Rekening Tujuan</span>
               <p className="text-xs font-bold text-slate-300">{billSettings.paymentAccountInfo?.bankName || 'Bank Syariah Indonesia (BSI)'}</p>
-              <div className="flex items-center justify-between bg-slate-900/80 p-2.5 rounded-lg border border-slate-700">
+              <div className="flex items-center justify-between bg-slate-950/80 p-2.5 rounded-lg border border-slate-700">
                 <span className="font-mono text-base font-black text-amber-300 tracking-wider">
                   {billSettings.paymentAccountInfo?.accountNumber || '7123456789'}
                 </span>
@@ -552,13 +552,13 @@ Terima kasih.`;
                 </span>
               </div>
               <p className="text-xs text-slate-300">
-                Atas Nama: <strong className="text-white">{billSettings.paymentAccountInfo?.accountHolder || 'MTs MANBAUL ISLAM'}</strong>
+                Atas Nama: <strong className="text-white">{billSettings.paymentAccountInfo?.accountHolder || schoolOfficials?.namaSekolah || 'Madrasah'}</strong>
               </p>
             </div>
 
-            <div className="bg-slate-800/70 p-4 rounded-xl border border-slate-700/80 space-y-2 flex flex-col justify-between">
+            <div className="bg-slate-900/80 p-4 rounded-xl border border-emerald-800/60 space-y-2 flex flex-col justify-between">
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-300">Petunjuk & Konfirmasi</span>
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-300">Petunjuk & Konfirmasi</span>
                 <p className="text-xs text-slate-300 mt-1 leading-relaxed">
                   {billSettings.paymentAccountInfo?.paymentInstructions || 'Sertakan nama siswa dan kelas pada berita transfer. Konfirmasi bukti transfer ke nomor WhatsApp Bendahara.'}
                 </p>
@@ -583,7 +583,7 @@ Terima kasih.`;
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="bg-slate-50 p-4 sm:px-6 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Receipt className="w-5 h-5 text-indigo-600" />
+            <Receipt className="w-5 h-5 text-emerald-600" />
             <h3 className="text-sm font-black text-slate-900">Riwayat Setoran Kwitansi Pembayaran Resmi Siswa</h3>
           </div>
           <span className="text-xs font-extrabold text-slate-500">
@@ -613,7 +613,7 @@ Terima kasih.`;
               <tbody className="divide-y divide-slate-100 font-medium">
                 {studentPayments.map((pay) => (
                   <tr key={pay.id} className="hover:bg-slate-50 transition">
-                    <td className="py-3 px-4 font-mono font-bold text-indigo-700">
+                    <td className="py-3 px-4 font-mono font-bold text-emerald-800">
                       {pay.invoiceNumber}
                     </td>
                     <td className="py-3 px-4 text-slate-600">
@@ -639,7 +639,7 @@ Terima kasih.`;
                     <td className="py-3 px-4 text-center">
                       <button
                         onClick={() => handlePrintReceipt(pay)}
-                        className="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 font-bold rounded-lg text-[11px] transition flex items-center space-x-1 mx-auto cursor-pointer"
+                        className="px-2.5 py-1 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-slate-700 font-bold rounded-lg text-[11px] transition flex items-center space-x-1 mx-auto cursor-pointer"
                         title="Cetak Kwitansi Pembayaran"
                       >
                         <Printer className="w-3 h-3" />

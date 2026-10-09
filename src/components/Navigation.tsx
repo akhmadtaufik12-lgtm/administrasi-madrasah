@@ -65,7 +65,7 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   const activeSchoolName = schoolOfficials?.namaSekolah || schoolName || getStoredSchoolOfficials()?.namaSekolah || 'Madrasah';
   
-  // Generate smart abbreviation / initials from school name (e.g. "MTs Manbaul Islam" -> "MI", "MTs Nurul Huda" -> "NH")
+  // Generate smart abbreviation / initials from school name (e.g. "MTs Al-Hikmah" -> "AH", "MTs Nurul Huda" -> "NH")
   const schoolInitials = (() => {
     const stripped = activeSchoolName.replace(/^madrasah\s+tsanawiyah\s+/i, '').replace(/^mts\s+/i, '').trim();
     const parts = stripped.split(/\s+/).filter(Boolean);

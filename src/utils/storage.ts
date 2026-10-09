@@ -417,7 +417,7 @@ export const DEFAULT_STUDENT_BILL_SETTINGS: StudentBillSettings = {
   paymentAccountInfo: {
     bankName: 'Bank Syariah Indonesia (BSI)',
     accountNumber: '7123456789',
-    accountHolder: 'MTs MANBAUL ISLAM',
+    accountHolder: 'Madrasah',
     qrisImageUrl: '',
     paymentInstructions: 'Transfer melalui BSI / ATM Bersama / Mobile Banking. Berita transfer: [Nama Siswa - Kelas - Pos Pembayaran]. Kirim bukti transfer ke kontak WhatsApp Bendahara.',
     contactPersonPhone: '081234567890'
@@ -427,8 +427,8 @@ export const DEFAULT_STUDENT_BILL_SETTINGS: StudentBillSettings = {
 
 export const DEFAULT_SCHOOL_OFFICIALS: SchoolOfficials = {
   // Profil & Identitas Lembaga
-  namaSekolah: 'Madrasah Tsanawiyah Manbaul Islam',
-  namaYayasan: 'Yayasan Pendidikan Manbaul Islam',
+  namaSekolah: 'Madrasah Tsanawiyah',
+  namaYayasan: 'Yayasan Pendidikan Islam',
   npsn: '20108921',
   nsm: '121231730005',
   akreditasi: 'A (Unggul)',
@@ -439,36 +439,36 @@ export const DEFAULT_SCHOOL_OFFICIALS: SchoolOfficials = {
   logoUrl: '',
 
   // Alamat & Kontak Lembaga
-  alamatSekolah: 'Jl. Sandang No. 34',
+  alamatSekolah: 'Jl. Pendidikan Madrasah No. 34',
   rtRw: 'RT 004 / RW 011',
-  kelurahan: 'Palmerah',
-  kecamatan: 'Palmerah',
-  kotaSekolah: 'Jakarta Barat',
-  provinsi: 'DKI Jakarta',
-  kodePos: '11480',
-  teleponSekolah: '(021) 5321855',
+  kelurahan: 'Madrasah',
+  kecamatan: 'Madrasah',
+  kotaSekolah: 'Kota Bogor',
+  provinsi: 'Jawa Barat',
+  kodePos: '16111',
+  teleponSekolah: '(0251) 8321855',
   whatsappSekolah: '0812-3456-7890',
-  emailSekolah: 'mtsmanbaulislam@gmail.com',
-  website: 'https://mtsmanbaulislam.sch.id',
+  emailSekolah: 'madrasah@gmail.com',
+  website: 'https://madrasah.sch.id',
 
   // Pejabat & Pimpinan Lembaga
   kepalaSekolah: {
     name: 'Dra. Hj. Nurjanah, M.Pd',
     nip: '197208151998032001',
     phone: '081288991122',
-    email: 'nurjanah@mtsmanbaulislam.sch.id'
+    email: 'nurjanah@madrasah.sch.id'
   },
   kesiswaan: {
     name: 'M. Sholihin, SE',
     nip: '85780',
     phone: '081234567804',
-    email: 'sholihin@mtsmanbaulislam.sch.id'
+    email: 'sholihin@madrasah.sch.id'
   },
   kurikulum: {
     name: 'Agustiani, S.Pd',
     nip: '85781',
     phone: '081234567806',
-    email: 'agustiani@mtsmanbaulislam.sch.id',
+    email: 'agustiani@madrasah.sch.id',
     kodeUnik: 'KURIKULUM2026'
   },
   sarpras: {
@@ -707,6 +707,13 @@ export function getStoredSchoolOfficials(schoolId?: SchoolId): SchoolOfficials {
     const data = safeLocalStorageGet(storageKey);
     if (data) {
       const parsed = JSON.parse(data);
+      // Clean legacy hardcoded Manbaul Islam defaults if not actively customized
+      if (parsed.namaSekolah === 'Madrasah Tsanawiyah Manbaul Islam' || parsed.namaSekolah === 'MTs Manbaul Islam') {
+        parsed.namaSekolah = defaultOfficials.namaSekolah;
+      }
+      if (parsed.namaYayasan === 'Yayasan Pendidikan Manbaul Islam' || parsed.namaYayasan === 'Yayasan Manbaul Islam') {
+        parsed.namaYayasan = defaultOfficials.namaYayasan;
+      }
       const bu = getTreasurerUtama(parsed);
       const collecting = getCollectingTreasurers(parsed);
       const treasurersList = [bu, ...collecting];
@@ -1008,7 +1015,7 @@ export function getStoredSessions(schoolId?: SchoolId): AttendanceSession[] {
     const data = safeLocalStorageGet(storageKey);
     if (data) return JSON.parse(data);
     
-    // Default sample sessions for MTs Manbaul Islam
+    // Default sample sessions for Madrasah
     const today = new Date().toISOString().split('T')[0];
     const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 
@@ -1694,7 +1701,10 @@ export function getStoredStudentBillSettings(schoolId?: SchoolId): StudentBillSe
           : DEFAULT_STUDENT_BILL_SETTINGS.studentOverrides,
         paymentAccountInfo: {
           ...DEFAULT_STUDENT_BILL_SETTINGS.paymentAccountInfo,
-          ...(parsed.paymentAccountInfo || {})
+          ...(parsed.paymentAccountInfo || {}),
+          accountHolder: (parsed.paymentAccountInfo?.accountHolder === 'MTs MANBAUL ISLAM' || !parsed.paymentAccountInfo?.accountHolder)
+            ? DEFAULT_STUDENT_BILL_SETTINGS.paymentAccountInfo?.accountHolder || 'Madrasah'
+            : parsed.paymentAccountInfo.accountHolder
         }
       };
     }

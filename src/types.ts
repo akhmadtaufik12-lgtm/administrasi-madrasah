@@ -652,7 +652,7 @@ export interface StudentBillSettings {
   paymentAccountInfo?: {
     bankName?: string; // e.g. "Bank Syariah Indonesia (BSI)"
     accountNumber?: string; // e.g. "7123456789"
-    accountHolder?: string; // e.g. "MTs Manbaul Islam"
+    accountHolder?: string; // e.g. "Madrasah"
     qrisImageUrl?: string;
     paymentInstructions?: string;
     contactPersonPhone?: string;

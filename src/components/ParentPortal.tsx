@@ -338,9 +338,9 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
     if (!activeStudent) return;
     const bodyContent = `
       <div style="font-family: sans-serif; padding: 20px;">
-        <div style="text-align: center; border-bottom: 2px solid #1e1b4b; padding-bottom: 12px; margin-bottom: 20px;">
-          <h2 style="margin:0; color:#1e1b4b; font-size: 20px;">LAPORAN HASIL BELAJAR & KEHADIRAN SISWA</h2>
-          <h3 style="margin:4px 0 0; color:#475569; font-size: 14px;">MTs MANBAUL ISLAM</h3>
+        <div style="text-align: center; border-bottom: 2px solid #14532d; padding-bottom: 12px; margin-bottom: 20px;">
+          <h2 style="margin:0; color:#14532d; font-size: 20px;">LAPORAN HASIL BELAJAR & KEHADIRAN SISWA</h2>
+          <h3 style="margin:4px 0 0; color:#475569; font-size: 14px;">${schoolOfficials?.namaSekolah?.toUpperCase() || 'MADRASAH'}</h3>
           <p style="margin:4px 0 0; font-size: 12px; color: #64748b;">Tahun Pelajaran ${academicYear} • ${semester}</p>
         </div>
 
@@ -359,7 +359,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
           </tr>
         </table>
 
-        <h4 style="margin: 15px 0 8px; color:#1e1b4b; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">1. REKAPITULASI KEHADIRAN SISWA (INPUT GURU)</h4>
+        <h4 style="margin: 15px 0 8px; color:#063016; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">1. REKAPITULASI KEHADIRAN SISWA (INPUT GURU)</h4>
         <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; margin-bottom: 20px;" border="1" cellPadding="6">
           <tr style="background-color: #f1f5f9;">
             <th>Total Pertemuan Guru</th>
@@ -379,7 +379,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
           </tr>
         </table>
 
-        <h4 style="margin: 15px 0 8px; color:#1e1b4b; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">2. MATERI / PELAJARAN YANG SUDAH DIBERIKAN GURU</h4>
+        <h4 style="margin: 15px 0 8px; color:#063016; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">2. MATERI / PELAJARAN YANG SUDAH DIBERIKAN GURU</h4>
         <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 20px;" border="1" cellPadding="6">
           <thead style="background-color: #f1f5f9;">
             <tr>
@@ -401,7 +401,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
           </tbody>
         </table>
 
-        <h4 style="margin: 15px 0 8px; color:#1e1b4b; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">3. REKAPITULASI NILAI AKADEMIK</h4>
+        <h4 style="margin: 15px 0 8px; color:#063016; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">3. REKAPITULASI NILAI AKADEMIK</h4>
         <table style="width: 100%; border-collapse: collapse; font-size: 11px;" border="1" cellPadding="6">
           <thead style="background-color: #f1f5f9;">
             <tr>
@@ -443,16 +443,16 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 flex flex-col">
+    <div className="min-h-screen bg-[#F2FBF5] font-sans text-slate-800 flex flex-col">
       
       {/* Top Header Navigation */}
-      <header className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-lg sticky top-0 z-30">
+      <header className="bg-gradient-to-r from-[#063016] via-[#0b4822] to-[#15803d] text-white shadow-lg sticky top-0 z-30 border-b border-emerald-700/60">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
           
           {/* Header Title & Branding */}
           <div className="flex items-center justify-between sm:justify-start space-x-3">
             <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
-              <div className="w-9 h-9 bg-indigo-500/20 border border-indigo-400/30 rounded-xl flex items-center justify-center text-emerald-400 shadow-inner shrink-0">
+              <div className="w-9 h-9 bg-emerald-500/20 border border-emerald-400/40 rounded-xl flex items-center justify-center text-emerald-300 shadow-inner shrink-0">
                 <GraduationCap className="w-5 h-5" />
               </div>
               <div className="min-w-0">
@@ -460,10 +460,10 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                   <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider truncate">
                     Portal Orang Tua / Wali Siswa
                   </span>
-                  <span className="text-[10px] text-indigo-300 font-medium hidden md:inline">TP {academicYear} • {semester}</span>
+                  <span className="text-[10px] text-emerald-200 font-medium hidden md:inline">TP {academicYear} • {semester}</span>
                 </div>
-                <h1 className="text-sm sm:text-lg font-black tracking-tight text-white leading-tight mt-0.5 truncate">
-                  MTs MANBAUL ISLAM
+                <h1 className="text-sm sm:text-lg font-black tracking-tight text-white leading-tight mt-0.5 truncate uppercase">
+                  {schoolOfficials?.namaSekolah || 'Madrasah'}
                 </h1>
               </div>
             </div>
@@ -487,12 +487,12 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
               href="https://perpus-digitalmbi.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 bg-sky-500/20 hover:bg-sky-500/30 active:bg-sky-500/40 text-sky-200 border border-sky-400/40 px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer shadow-2xs"
+              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 active:bg-emerald-500/40 text-emerald-200 border border-emerald-400/40 px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer shadow-2xs"
               title={`Perpustakaan Digital ${schoolOfficials?.namaSekolah || 'Madrasah'}`}
             >
-              <Library className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400 shrink-0" />
+              <Library className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-300 shrink-0" />
               <span className="truncate">Perpustakaan</span>
-              <ExternalLink className="w-3 h-3 text-sky-300 shrink-0 opacity-80" />
+              <ExternalLink className="w-3 h-3 text-emerald-300 shrink-0 opacity-80" />
             </a>
 
             <a
@@ -528,7 +528,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-indigo-600" />
+              <Filter className="w-4 h-4 text-emerald-600" />
               <h2 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
                 {lockedStudent ? 'Akses Terverifikasi Laporan Siswa' : 'Filter Kelas & Nama Siswa'}
               </h2>
@@ -554,7 +554,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                     </span>
                   </div>
                   <p className="text-xs font-black text-slate-900 mt-0.5">
-                    Hanya Menampilkan Data Siswa: <span className="text-indigo-950 font-extrabold">{lockedStudent.name}</span> (Kelas {lockedStudent.className})
+                    Hanya Menampilkan Data Siswa: <span className="text-emerald-950 font-extrabold">{lockedStudent.name}</span> (Kelas {lockedStudent.className})
                   </p>
                 </div>
               </div>
@@ -566,7 +566,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                 <select
                   value={selectedSubjectFilter}
                   onChange={e => setSelectedSubjectFilter(e.target.value)}
-                  className="w-full bg-indigo-50/70 border border-indigo-200 rounded-xl px-3 py-2 text-xs font-extrabold text-indigo-950 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer"
+                  className="w-full bg-emerald-50/70 border border-emerald-200 rounded-xl px-3 py-2 text-xs font-extrabold text-emerald-950 focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
                 >
                   <option value="all">Semua Mata Pelajaran ({subjects.length})</option>
                   {subjects.map(sub => (
@@ -590,7 +590,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                     setSelectedStudentId('');
                     setNameSearch('');
                   }}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-extrabold text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-extrabold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-none cursor-pointer"
                 >
                   {classList.map(c => (
                     <option key={c} value={c}>Kelas {c}</option>
@@ -606,7 +606,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                 <select
                   value={activeStudent?.id || ''}
                   onChange={e => setSelectedStudentId(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-extrabold text-indigo-950 focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-extrabold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-none cursor-pointer"
                 >
                   {classStudents.map(s => (
                     <option key={s.id} value={s.id}>
@@ -628,7 +628,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                     placeholder="Ketik nama siswa..."
                     value={nameSearch}
                     onChange={e => setNameSearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-none"
                   />
                 </div>
               </div>
@@ -641,7 +641,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                 <select
                   value={selectedSubjectFilter}
                   onChange={e => setSelectedSubjectFilter(e.target.value)}
-                  className="w-full bg-indigo-50/70 border border-indigo-200 rounded-xl px-3 py-2 text-xs font-extrabold text-indigo-950 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer"
+                  className="w-full bg-emerald-50/70 border border-emerald-200 rounded-xl px-3 py-2 text-xs font-extrabold text-emerald-950 focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
                 >
                   <option value="all">Semua Mata Pelajaran ({subjects.length})</option>
                   {subjects.map(sub => (
@@ -674,7 +674,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                   <h2 className="text-xl font-black tracking-tight text-white mt-1">
                     {activeStudent.name}
                   </h2>
-                  <p className="text-xs text-indigo-200/90 font-medium mt-0.5">
+                  <p className="text-xs text-emerald-100 font-medium mt-0.5">
                     Kode Unik: <strong className="text-emerald-300 font-mono">{activeStudent.kodeUnik || '-'}</strong> • NISN: <strong className="text-white">{activeStudent.nisn || '-'}</strong>
                   </p>
                 </div>
@@ -695,7 +695,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <Megaphone className="w-4 h-4 text-indigo-600 animate-bounce" />
+                    <Megaphone className="w-4 h-4 text-emerald-600 animate-bounce" />
                     <h3 className="text-xs font-black uppercase tracking-wider text-slate-800">
                       Pesan & Pengumuman Khusus Madrasah ({studentAnnouncements.length})
                     </h3>
@@ -716,18 +716,18 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                         onClick={() => setSelectedAnnouncement(ann)}
                         className={`p-4 rounded-2xl border transition shadow-xs hover:shadow-md cursor-pointer flex flex-col justify-between gap-3 ${
                           isPersonal
-                            ? 'bg-gradient-to-br from-indigo-900/5 via-purple-500/10 to-indigo-50/70 border-indigo-300 ring-1 ring-indigo-500/20'
+                            ? 'bg-gradient-to-br from-emerald-900/5 via-teal-500/10 to-emerald-50/70 border-emerald-300 ring-1 ring-emerald-500/20'
                             : ann.type === 'urgent'
                             ? 'bg-rose-50/80 border-rose-200'
                             : ann.type === 'warning'
                             ? 'bg-amber-50/80 border-amber-200'
-                            : 'bg-white border-slate-200 hover:border-indigo-300'
+                            : 'bg-white border-slate-200 hover:border-emerald-300'
                         }`}
                       >
                         <div className="space-y-2">
                           <div className="flex flex-wrap items-center gap-1.5">
                             {isPersonal ? (
-                              <span className="bg-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-2xs">
+                              <span className="bg-emerald-700 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-2xs">
                                 <span>🔒 Pesan Khusus Siswa</span>
                               </span>
                             ) : isParentClass ? (
@@ -735,7 +735,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                                 👨‍👩‍👧 Info Wali Murid {ann.targetClass ? `Kelas ${ann.targetClass}` : ''}
                               </span>
                             ) : (
-                              <span className="bg-blue-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-2xs">
+                              <span className="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-2xs">
                                 📢 Pengumuman Umum
                               </span>
                             )}
@@ -758,7 +758,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
 
                         <div className="flex items-center justify-between pt-2 border-t border-slate-100/80 text-[11px] text-slate-400">
                           <span>Oleh: <strong className="text-slate-700">{ann.authorName || 'Admin Madrasah'}</strong></span>
-                          <span className="text-indigo-600 font-extrabold flex items-center gap-0.5">
+                          <span className="text-emerald-700 font-extrabold flex items-center gap-0.5">
                             <span>Baca Detail</span>
                             <ChevronRight className="w-3.5 h-3.5" />
                           </span>
@@ -776,7 +776,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                 onClick={() => setActiveTab('kehadiran')}
                 className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-extrabold text-xs transition cursor-pointer ${
                   activeTab === 'kehadiran'
-                    ? 'bg-indigo-900 text-white shadow-md'
+                    ? 'bg-[#15803d] text-white shadow-md font-black'
                     : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200'
                 }`}
               >
@@ -788,7 +788,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                 onClick={() => setActiveTab('pelajaran')}
                 className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-extrabold text-xs transition cursor-pointer ${
                   activeTab === 'pelajaran'
-                    ? 'bg-indigo-900 text-white shadow-md'
+                    ? 'bg-[#15803d] text-white shadow-md font-black'
                     : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200'
                 }`}
               >
@@ -800,7 +800,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                 onClick={() => setActiveTab('nilai')}
                 className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-extrabold text-xs transition cursor-pointer ${
                   activeTab === 'nilai'
-                    ? 'bg-indigo-900 text-white shadow-md'
+                    ? 'bg-[#15803d] text-white shadow-md font-black'
                     : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200'
                 }`}
               >
@@ -868,13 +868,13 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                     <p className="text-[10px] text-emerald-700 font-semibold mt-0.5">{attendanceStats.percentage}% Tingkat Kehadiran</p>
                   </div>
 
-                  <div className="bg-blue-50 p-3.5 rounded-xl border border-blue-200 shadow-2xs">
+                  <div className="bg-teal-50 p-3.5 rounded-xl border border-teal-200 shadow-2xs">
                     <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-extrabold uppercase text-blue-800">Izin</p>
-                      <Clock className="w-4 h-4 text-blue-600" />
+                      <p className="text-[10px] font-extrabold uppercase text-teal-800">Izin</p>
+                      <Clock className="w-4 h-4 text-teal-600" />
                     </div>
-                    <p className="text-xl font-black text-blue-950 mt-1">{attendanceStats.izin}</p>
-                    <p className="text-[10px] text-blue-700 font-medium mt-0.5">Keterangan Izin Resmi</p>
+                    <p className="text-xl font-black text-teal-950 mt-1">{attendanceStats.izin}</p>
+                    <p className="text-[10px] text-teal-700 font-medium mt-0.5">Keterangan Izin Resmi</p>
                   </div>
 
                   <div className="bg-amber-50 p-3.5 rounded-xl border border-amber-200 shadow-2xs">
@@ -901,7 +901,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
                     <div>
                       <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                        <UserCheck className="w-4 h-4 text-indigo-600" />
+                        <UserCheck className="w-4 h-4 text-emerald-600" />
                         <span>Rincian Hasil Inputan Absen dari Guru</span>
                       </h3>
                       <p className="text-[11px] text-slate-500 mt-0.5">
@@ -943,8 +943,8 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                             );
                             if (item.status === 'IZIN') {
                               statusBadge = (
-                                <span className="bg-blue-100 text-blue-800 border border-blue-300 px-3 py-1 rounded-full font-black text-[10px] inline-flex items-center space-x-1">
-                                  <Clock className="w-3 h-3 text-blue-600" />
+                                <span className="bg-teal-100 text-teal-800 border border-teal-300 px-3 py-1 rounded-full font-black text-[10px] inline-flex items-center space-x-1">
+                                  <Clock className="w-3 h-3 text-teal-600" />
                                   <span>IZIN</span>
                                 </span>
                               );
@@ -968,11 +968,11 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                               <tr key={item.id} className="hover:bg-slate-50/80 transition">
                                 <td className="py-3 px-3 font-extrabold text-slate-900 whitespace-nowrap">
                                   <div className="flex items-center space-x-1.5">
-                                    <Calendar className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                                    <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                                     <span>{item.sessionDate}</span>
                                   </div>
                                 </td>
-                                <td className="py-3 px-3 font-bold text-indigo-950">
+                                <td className="py-3 px-3 font-bold text-slate-900">
                                   {item.subjectName}
                                 </td>
                                 <td className="py-3 px-3 font-medium text-slate-600">
@@ -1031,10 +1031,10 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                       {classLessonsDelivered.map((item, idx) => (
                         <div
                           key={item.id || idx}
-                          className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2.5 hover:shadow-xs hover:border-indigo-300 transition"
+                          className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2.5 hover:shadow-xs hover:border-emerald-300 transition"
                         >
                           <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
-                            <span className="bg-indigo-900 text-white font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                            <span className="bg-[#0e4822] text-white font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                               {item.subjectName}
                             </span>
                             <span className="text-[11px] font-bold text-slate-500 flex items-center space-x-1">
@@ -1046,7 +1046,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                           <div>
                             <p className="text-[10px] uppercase font-bold text-slate-400">Guru Pengajar:</p>
                             <p className="text-xs font-bold text-slate-800 flex items-center space-x-1 mt-0.5">
-                              <User className="w-3.5 h-3.5 text-indigo-600" />
+                              <User className="w-3.5 h-3.5 text-emerald-600" />
                               <span>{item.teacherName}</span>
                             </p>
                           </div>
@@ -1063,7 +1063,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                               <span className="text-slate-500 font-medium">Status Kehadiran Siswa:</span>
                               <span className={`font-black px-2 py-0.5 rounded ${
                                 item.studentStatus === 'HADIR' ? 'bg-emerald-100 text-emerald-800' :
-                                item.studentStatus === 'IZIN' ? 'bg-blue-100 text-blue-800' :
+                                item.studentStatus === 'IZIN' ? 'bg-teal-100 text-teal-800' :
                                 item.studentStatus === 'SAKIT' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800'
                               }`}>
                                 {item.studentStatus}
@@ -1082,7 +1082,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                     <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                       <div>
                         <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                          <FileText className="w-4 h-4 text-indigo-600" />
+                          <FileText className="w-4 h-4 text-emerald-600" />
                           <span>Modul Ajar & Target Pembelajaran Kurikulum Merdeka</span>
                         </h3>
                         <p className="text-[11px] text-slate-500 mt-0.5">
@@ -1093,16 +1093,16 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {classLessonPlans.map(plan => (
-                        <div key={plan.id} className="bg-indigo-50/40 border border-indigo-100 rounded-xl p-4 space-y-3">
-                          <div className="flex items-center justify-between border-b border-indigo-100 pb-2">
-                            <span className="font-extrabold text-indigo-950 text-xs">{plan.subjectName}</span>
-                            <span className="text-[10px] bg-indigo-100 text-indigo-900 font-bold px-2 py-0.5 rounded">
+                        <div key={plan.id} className="bg-emerald-50/40 border border-emerald-100 rounded-xl p-4 space-y-3">
+                          <div className="flex items-center justify-between border-b border-emerald-100 pb-2">
+                            <span className="font-extrabold text-emerald-950 text-xs">{plan.subjectName}</span>
+                            <span className="text-[10px] bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded">
                               {plan.timeAllocation}
                             </span>
                           </div>
 
                           <div>
-                            <p className="text-[10px] uppercase font-bold text-indigo-700">Topik Pembelajaran:</p>
+                            <p className="text-[10px] uppercase font-bold text-emerald-700">Topik Pembelajaran:</p>
                             <p className="text-xs font-black text-slate-900 mt-0.5">{plan.topic}</p>
                           </div>
 
@@ -1148,8 +1148,8 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                     </div>
                   </div>
 
-                  <div className="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-center shadow-inner">
-                    <p className="text-[10px] text-indigo-300 font-extrabold uppercase">Rerata Nilai Akhir</p>
+                  <div className="bg-[#0e4822] text-white px-5 py-2.5 rounded-xl text-center shadow-inner">
+                    <p className="text-[10px] text-emerald-200 font-extrabold uppercase">Rerata Nilai Akhir</p>
                     <p className="text-2xl font-black text-amber-400">{overallGradeStats.avg}</p>
                   </div>
                 </div>
@@ -1158,7 +1158,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                      <BookOpen className="w-4 h-4 text-indigo-600" />
+                      <BookOpen className="w-4 h-4 text-emerald-600" />
                       <span>Transkrip Nilai Kurikulum Merdeka ({semester})</span>
                     </h3>
                   </div>
@@ -1173,7 +1173,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                           <th className="py-2.5 px-3 text-center">Sumatif TP</th>
                           <th className="py-2.5 px-3 text-center">UTS</th>
                           <th className="py-2.5 px-3 text-center">UAS</th>
-                          <th className="py-2.5 px-3 text-center bg-indigo-50/50">Nilai Akhir</th>
+                          <th className="py-2.5 px-3 text-center bg-emerald-50/60">Nilai Akhir</th>
                           <th className="py-2.5 px-3 text-center">Predikat</th>
                           <th className="py-2.5 px-3">Deskripsi Capaian Pembelajaran</th>
                         </tr>
@@ -1184,7 +1184,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                           
                           let predClass = 'bg-slate-100 text-slate-700';
                           if (grade?.predicate === 'A (Sangat Baik)') predClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
-                          else if (grade?.predicate === 'B (Baik)') predClass = 'bg-blue-100 text-blue-800 border-blue-300';
+                          else if (grade?.predicate === 'B (Baik)') predClass = 'bg-teal-100 text-teal-800 border-teal-300';
                           else if (grade?.predicate === 'C (Cukup)') predClass = 'bg-amber-100 text-amber-800 border-amber-300';
                           else if (grade?.predicate === 'D (Perlu Bimbingan)') predClass = 'bg-rose-100 text-rose-800 border-rose-300';
 
@@ -1209,7 +1209,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                               <td className="py-3 px-3 text-center font-bold text-slate-700">
                                 {grade?.sumatifUAS ?? '-'}
                               </td>
-                              <td className="py-3 px-3 text-center font-black text-indigo-950 bg-indigo-50/30 text-sm">
+                              <td className="py-3 px-3 text-center font-black text-emerald-950 bg-emerald-50/40 text-sm">
                                 {hasGrade ? grade.finalGrade : '-'}
                               </td>
                               <td className="py-3 px-3 text-center whitespace-nowrap">
@@ -1280,7 +1280,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                             ? 'bg-rose-100 text-rose-800 border-rose-300'
                             : v.category === 'Sedang'
                             ? 'bg-amber-100 text-amber-800 border-amber-300'
-                            : 'bg-blue-100 text-blue-800 border-blue-300';
+                            : 'bg-teal-100 text-teal-800 border-teal-300';
 
                         return (
                           <div
@@ -1289,7 +1289,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
                           >
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/60 pb-2">
                               <div className="flex items-center space-x-2">
-                                <span className="bg-indigo-900 text-white text-[10px] font-black px-2 py-0.5 rounded">
+                                <span className="bg-[#0e4822] text-white text-[10px] font-black px-2 py-0.5 rounded">
                                   {v.date}
                                 </span>
                                 <h4 className={`font-black text-xs ${v.category === 'Apresiasi' || v.points < 0 ? 'text-emerald-800' : 'text-slate-900'}`}>{v.violationType}</h4>
@@ -1354,7 +1354,7 @@ export const ParentPortal: React.FC<ParentPortalProps> = ({
           </>
         ) : (
           <div className="bg-white rounded-2xl p-12 text-center text-slate-400 border border-slate-200">
-            <Users className="w-12 h-12 mx-auto mb-3 opacity-30 text-indigo-500" />
+            <Users className="w-12 h-12 mx-auto mb-3 opacity-30 text-emerald-600" />
             <h3 className="text-sm font-black text-slate-800">Tidak ada siswa yang dipilih</h3>
             <p className="text-xs text-slate-500 mt-1">Silakan pilih kelas dan nama siswa dari menu di atas.</p>
           </div>

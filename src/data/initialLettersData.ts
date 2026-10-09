@@ -89,7 +89,7 @@ export const INITIAL_SURAT_KELUAR: SuratKeluar[] = [
     penandatanganNip: '197208151998032001',
     penandatanganJabatan: 'Kepala Madrasah',
     status: 'Terbit',
-    tembusan: ['Ketua Yayasan Manbaul Islam', 'Ketua Komite Madrasah', 'Arsip Tata Usaha'],
+    tembusan: ['Ketua Yayasan', 'Ketua Komite Madrasah', 'Arsip Tata Usaha'],
     createdAt: '2026-08-28T09:15:00.000Z',
     schoolId: 'mts_manbaul_islam'
   },
