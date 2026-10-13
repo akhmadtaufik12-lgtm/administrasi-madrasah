@@ -50,6 +50,7 @@ import {
   setActiveSchoolId,
   getSchoolConfig,
   getClassesForSchool,
+  saveClassesForSchool,
   ALL_SCHOOLS,
   INITIAL_STUDENTS,
   INITIAL_TEACHERS,
@@ -459,7 +460,8 @@ export default function App() {
   // Active School State ('mts_manbaul_islam' | 'smk_yak_1')
   const [activeSchoolId, setActiveSchoolIdState] = useState<SchoolId>(() => getActiveSchoolId());
   const currentSchool = getSchoolConfig(activeSchoolId);
-  const currentClassesList = getClassesForSchool(activeSchoolId);
+  const [classList, setClassList] = useState<string[]>(() => getClassesForSchool(activeSchoolId));
+  const currentClassesList = classList;
 
   // Selection Context
   const [activeTab, setActiveTab] = useState<ActiveTab>('jadwal');
@@ -541,6 +543,7 @@ export default function App() {
     setSuratMasukList(loadedSuratMasuk);
 
     const classes = getClassesForSchool(newSchoolId);
+    setClassList(classes);
     const nextClass = classes[0] || 'VII A';
     setActiveClass(nextClass);
 
@@ -1316,6 +1319,54 @@ export default function App() {
       await saveSubjectsToFirebase(updated);
     } catch (e) {
       console.error('Failed to sync subjects to Firebase:', e);
+    }
+  };
+
+  const handleAddClass = (newClass: string) => {
+    const trimmed = newClass.trim();
+    if (!trimmed || classList.includes(trimmed)) return;
+    const updated = [...classList, trimmed];
+    setClassList(updated);
+    saveClassesForSchool(updated, activeSchoolId);
+  };
+
+  const handleEditClass = (oldClass: string, newClass: string) => {
+    const trimmed = newClass.trim();
+    if (!trimmed || trimmed === oldClass) return;
+    const updated = classList.map(c => c === oldClass ? trimmed : c);
+    setClassList(updated);
+    saveClassesForSchool(updated, activeSchoolId);
+
+    // Update students assigned to this class
+    const updatedStudents = students.map(s => s.className === oldClass ? { ...s, className: trimmed } : s);
+    setStudents(updatedStudents);
+    saveStudents(updatedStudents, activeSchoolId);
+
+    // Update schedules
+    const updatedSchedules = schedules.map(s => s.className === oldClass ? { ...s, className: trimmed } : s);
+    setSchedules(updatedSchedules);
+    saveSchedules(updatedSchedules, activeSchoolId);
+
+    // Update classWaliKelas
+    if (classWaliKelas && classWaliKelas[oldClass]) {
+      const updatedWali = { ...classWaliKelas, [trimmed]: classWaliKelas[oldClass] };
+      delete updatedWali[oldClass];
+      setClassWaliKelas(updatedWali);
+      saveClassWaliKelas(updatedWali, activeSchoolId);
+    }
+
+    if (activeClass === oldClass) {
+      setActiveClass(trimmed);
+    }
+  };
+
+  const handleDeleteClass = (targetClass: string) => {
+    const updated = classList.filter(c => c !== targetClass);
+    setClassList(updated);
+    saveClassesForSchool(updated, activeSchoolId);
+
+    if (activeClass === targetClass) {
+      setActiveClass(updated[0] || '');
     }
   };
 
@@ -2714,6 +2765,9 @@ export default function App() {
                 onBulkSaveStudents={handleBulkSaveStudents}
                 onDeleteAllStudents={handleDeleteAllStudents}
                 onResetDefaultStudents={handleResetDefaultStudents}
+                onAddClass={handleAddClass}
+                onEditClass={handleEditClass}
+                onDeleteClass={handleDeleteClass}
               />
             )}
 

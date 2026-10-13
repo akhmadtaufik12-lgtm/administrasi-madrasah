@@ -637,9 +637,10 @@ export function exportStudentsToExcel(students: Student[], schoolName: string = 
 
 export function exportAttendanceSessionCSV(session: AttendanceSession, studentsMap: Map<string, Student>): void {
   const headers = ['No', 'Kelas', 'Nama Siswa', 'Status Kehadiran', 'Keterangan / Catatan'];
+  const schoolTitle = (getStoredSchoolOfficials()?.namaSekolah || 'Madrasah').toUpperCase();
   
   const rows: (string | number)[][] = [
-    ['JURNAL DAN PRESENSI MENGAJAR GURU - MTS MANBAUL ISLAM'],
+    [`JURNAL DAN PRESENSI MENGAJAR GURU - ${schoolTitle}`],
     [`Tanggal: ${session.date}`],
     [`Guru: ${session.teacherName} (NIP: ${session.teacherNip})`],
     [`Mata Pelajaran: ${session.subjectName}`],
@@ -818,3 +819,170 @@ export function printFormattedDocument(elementId: string): void {
   `);
   printWindow.document.close();
 }
+
+/**
+ * Downloads Excel template formatted in aSc Timetables Matriks style per Day.
+ * Matches the uploaded PDF format:
+ * - 6 Day Sheets: SENIN, SELASA, RABU, KAMIS, JUMAT, SABTU
+ * - Columns: Kelas, Jam 1 to 8 + Istirahat
+ * - Rows: VII A through IX F
+ * - Format cell: "Mata Pelajaran\nNama Guru"
+ */
+export function downloadAscTimetableExcelTemplate(schoolName = 'Madrasah'): void {
+  const days: { key: string; name: string }[] = [
+    { key: 'SENIN', name: 'SENIN' },
+    { key: 'SELASA', name: 'SELASA' },
+    { key: 'RABU', name: 'RABU' },
+    { key: 'KAMIS', name: 'KAMIS' },
+    { key: 'JUMAT', name: 'JUMAT' },
+    { key: 'SABTU', name: 'SABTU' }
+  ];
+
+  const headers = [
+    'Kelas',
+    '1 (07:15 - 07:50)',
+    '2 (07:50 - 08:25)',
+    '3 (08:25 - 09:00)',
+    '4 (09:00 - 09:35)',
+    'Istirahat (09:35 - 09:55)',
+    '5 (09:55 - 10:30)',
+    '6 (10:30 - 11:05)',
+    '7 (11:05 - 11:40)',
+    '8 (11:40 - 12:15)'
+  ];
+
+  const defaultClasses = [
+    'VII A', 'VII B', 'VII C', 'VII D', 'VII E',
+    'VIII A', 'VIII B', 'VIII C', 'VIII D', 'VIII E',
+    'IX A', 'IX B', 'IX C', 'IX D', 'IX E', 'IX F'
+  ];
+
+  const workbook = XLSX.utils.book_new();
+
+  // 1. Petunjuk Pengisian Sheet
+  const petunjukData = [
+    ['PETUNJUK PENGISIAN JADWAL FORMAT aSc TIMETABLES (.xlsx)'],
+    ['Lembaga / Sekolah:', schoolName],
+    [''],
+    ['1. File ini terdiri dari sheet untuk setiap hari pembelajaran: SENIN, SELASA, RABU, KAMIS, JUMAT, dan SABTU.'],
+    ['2. Setiap baris mewakili 1 Kelas (misal VII A, VII B, dst).'],
+    ['3. Kolom Jam 1 sampai Jam 8 mewakili jam pelajaran tatap muka.'],
+    ['4. Pada setiap sel jam pelajaran, masukkan data dengan format:'],
+    ['   Baris 1: NAMA MATA PELAJARAN'],
+    ['   Baris 2: NAMA GURU PENGAJAR'],
+    ['   (Gunakan Alt + Enter di Excel untuk membuat baris baru di dalam sel yang sama, atau gunakan tanda miring / contoh: "Matematika / Listijawati, SE")'],
+    ['5. Jam rangkap (misal jam 3 & 4 mengajar mapel dan guru yang sama) dapat diisi di kedua kolom (Jam 3 dan Jam 4) atau digabungkan.'],
+    ['6. Kolom Istirahat dapat diabaikan atau dibiarkan bertuliskan "Istirahat".'],
+    ['7. File yang telah diisi dapat langsung di-upload ke menu "Upload Jadwal Pelajaran" di aplikasi.'],
+    [''],
+    ['Contoh isi sel:'],
+    ['ILMU PENGETAHUAN SOSIAL\nMaulida, S.Pd'],
+    ['MATEMATIKA\nListijawati, SE'],
+    ['BAHASA INDONESIA\nLia Marlianty, S.Pd.I'],
+    ['SUPERVISI\nAnah, S.Pd']
+  ];
+  const petunjukSheet = XLSX.utils.aoa_to_sheet(petunjukData);
+  petunjukSheet['!cols'] = [{ wch: 75 }];
+  XLSX.utils.book_append_sheet(workbook, petunjukSheet, 'Petunjuk_Pengisian');
+
+  // 2. Sample Data per Day (reflecting actual format)
+  days.forEach(day => {
+    const sheetData: string[][] = [headers];
+
+    defaultClasses.forEach(className => {
+      // Provide clean pre-filled or template rows
+      let row: string[] = [];
+      if (day.key === 'SENIN' && className === 'VII A') {
+        row = [
+          className,
+          '', // Jam 1 Upacara
+          'SUPERVISI\nAnah, S.Pd',
+          'ILMU PENGETAHUAN SOSIAL\nMaulida, S.Pd',
+          'ILMU PENGETAHUAN SOSIAL\nMaulida, S.Pd',
+          'Istirahat',
+          'SEJARAH KEBUDAYAAN ISLAM\nKumainia, S.Pd.I',
+          'SEJARAH KEBUDAYAAN ISLAM\nKumainia, S.Pd.I',
+          'BAHASA INDONESIA\nLia Marlianty, S.Pd.I',
+          'BAHASA INDONESIA\nLia Marlianty, S.Pd.I'
+        ];
+      } else if (day.key === 'SENIN' && className === 'VII B') {
+        row = [
+          className,
+          '',
+          'SUPERVISI\nKumainia, S.Pd.I',
+          "AL QUR'AN HADIST\nNursiwan, S.Pd.I",
+          "AL QUR'AN HADIST\nNursiwan, S.Pd.I",
+          'Istirahat',
+          'PRAKARYA\nTuti Tri Sevti, S.Pd',
+          'PRAKARYA\nTuti Tri Sevti, S.Pd',
+          'ILMU PENGETAHUAN SOSIAL\nMaulida, S.Pd',
+          'ILMU PENGETAHUAN SOSIAL\nMaulida, S.Pd'
+        ];
+      } else {
+        row = [className, '', '', '', '', 'Istirahat', '', '', '', ''];
+      }
+      sheetData.push(row);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    ws['!cols'] = [
+      { wch: 10 }, // Kelas
+      { wch: 22 }, // Jam 1
+      { wch: 22 }, // Jam 2
+      { wch: 24 }, // Jam 3
+      { wch: 24 }, // Jam 4
+      { wch: 14 }, // Istirahat
+      { wch: 24 }, // Jam 5
+      { wch: 24 }, // Jam 6
+      { wch: 24 }, // Jam 7
+      { wch: 24 }  // Jam 8
+    ];
+    XLSX.utils.book_append_sheet(workbook, ws, day.key);
+  });
+
+  const cleanName = schoolName.replace(/[^a-zA-Z0-9]/g, '_');
+  XLSX.writeFile(workbook, `Template_Jadwal_aSc_Timetables_${cleanName}.xlsx`);
+}
+
+/**
+ * Downloads Tabular / List format Excel template for teaching schedules.
+ */
+export function downloadTabularScheduleTemplate(schoolName = 'Madrasah'): void {
+  const headers = [
+    'Hari',
+    'Kelas',
+    'Jam Ke',
+    'Waktu',
+    'Mata Pelajaran',
+    'Nama Guru',
+    'Ruang'
+  ];
+
+  const sampleRows = [
+    ['Senin', 'VII A', '2', '07:50 - 08:25', 'Supervisi Pembelajaran', 'Anah, S.Pd', 'Ruang VII-A'],
+    ['Senin', 'VII A', '3-4', '08:25 - 09:35', 'Ilmu Pengetahuan Sosial', 'Maulida, S.Pd', 'Ruang VII-A'],
+    ['Senin', 'VII A', '5-6', '09:55 - 11:05', 'Sejarah Kebudayaan Islam (SKI)', 'Kumainia, S.Pd.I', 'Ruang VII-A'],
+    ['Senin', 'VII A', '7-8', '11:05 - 12:15', 'Bahasa Indonesia', 'Lia Marlianty, S.Pd.I', 'Ruang VII-A'],
+    ['Senin', 'VII B', '2', '07:50 - 08:25', 'Supervisi Pembelajaran', 'Kumainia, S.Pd.I', 'Ruang VII-B'],
+    ['Senin', 'VII B', '3-4', '08:25 - 09:35', "Al-Qur'an Hadits", 'Nursiwan, S.Pd.I', 'Ruang VII-B'],
+    ['Senin', 'VII B', '5-6', '09:55 - 11:05', 'Prakarya', 'Tuti Tri Sevti, S.Pd', 'Ruang VII-B'],
+    ['Senin', 'VII B', '7-8', '11:05 - 12:15', 'Ilmu Pengetahuan Sosial', 'Maulida, S.Pd', 'Ruang VII-B']
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...sampleRows]);
+  ws['!cols'] = [
+    { wch: 12 }, // Hari
+    { wch: 10 }, // Kelas
+    { wch: 10 }, // Jam Ke
+    { wch: 18 }, // Waktu
+    { wch: 30 }, // Mata Pelajaran
+    { wch: 25 }, // Nama Guru
+    { wch: 14 }  // Ruang
+  ];
+  XLSX.utils.book_append_sheet(workbook, ws, 'Jadwal_Pelajaran');
+
+  const cleanName = schoolName.replace(/[^a-zA-Z0-9]/g, '_');
+  XLSX.writeFile(workbook, `Template_Jadwal_Tabel_${cleanName}.xlsx`);
+}
+

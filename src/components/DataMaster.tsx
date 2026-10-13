@@ -71,6 +71,9 @@ interface DataMasterProps {
   onBulkSaveStudents?: (students: Student[]) => void;
   onDeleteAllStudents?: (classFilter?: string) => void;
   onResetDefaultStudents?: () => void;
+  onAddClass?: (newClass: string) => void;
+  onEditClass?: (oldClass: string, newClass: string) => void;
+  onDeleteClass?: (className: string) => void;
 }
 
 export const DataMaster: React.FC<DataMasterProps> = ({
@@ -97,9 +100,12 @@ export const DataMaster: React.FC<DataMasterProps> = ({
   onDeleteStudent,
   onBulkSaveStudents,
   onDeleteAllStudents,
-  onResetDefaultStudents
+  onResetDefaultStudents,
+  onAddClass,
+  onEditClass,
+  onDeleteClass
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'guru' | 'mapel' | 'siswa' | 'pejabat'>('guru');
+  const [activeSubTab, setActiveSubTab] = useState<'guru' | 'mapel' | 'kelas' | 'siswa' | 'pejabat'>('guru');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedClassFilter, setSelectedClassFilter] = useState('ALL');
 
@@ -243,9 +249,14 @@ export const DataMaster: React.FC<DataMasterProps> = ({
   const [selectedStudentForPrint, setSelectedStudentForPrint] = useState<Student | null>(null);
   const [isRegisterPrintOpen, setIsRegisterPrintOpen] = useState(false);
 
+  // Class Add/Edit state
+  const [isAddClassOpen, setIsAddClassOpen] = useState(false);
+  const [editingClass, setEditingClass] = useState<string | null>(null);
+  const [classNameInput, setClassNameInput] = useState('');
+
   // Delete confirm modal state
   const [deleteTarget, setDeleteTarget] = useState<{
-    type: 'guru' | 'mapel' | 'siswa';
+    type: 'guru' | 'mapel' | 'siswa' | 'kelas';
     id: string;
     name: string;
   } | null>(null);
@@ -257,6 +268,10 @@ export const DataMaster: React.FC<DataMasterProps> = ({
 
   const filteredSubjects = subjects.filter(
     s => s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.code.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredClasses = classList.filter(
+    c => !searchQuery || c.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredStudents = students.filter(s => {
@@ -415,6 +430,39 @@ export const DataMaster: React.FC<DataMasterProps> = ({
     setIsAddSubjectOpen(true);
   };
 
+  const handleOpenAddClass = () => {
+    setEditingClass(null);
+    setClassNameInput('');
+    setIsAddClassOpen(true);
+  };
+
+  const handleOpenEditClass = (cls: string) => {
+    setEditingClass(cls);
+    setClassNameInput(cls);
+    setIsAddClassOpen(true);
+  };
+
+  const handleAddClassSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = classNameInput.trim();
+    if (!trimmed) return;
+    if (editingClass) {
+      onEditClass?.(editingClass, trimmed);
+      setToastMessage(`Nama kelas "${editingClass}" berhasil diperbarui menjadi "${trimmed}"!`);
+    } else {
+      if (classList.includes(trimmed)) {
+        setToastMessage(`Kelas "${trimmed}" sudah ada dalam daftar.`);
+        return;
+      }
+      onAddClass?.(trimmed);
+      setToastMessage(`Kelas baru "${trimmed}" berhasil ditambahkan!`);
+    }
+    setIsAddClassOpen(false);
+    setEditingClass(null);
+    setClassNameInput('');
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
   const handleOpenAddStudent = () => {
     setEditingStudent(null);
     setIsAddStudentOpen(true);
@@ -535,6 +583,10 @@ Wassalamu'alaikum Wr. Wb.`;
       onDeleteSubject?.(deleteTarget.id);
     } else if (deleteTarget.type === 'siswa') {
       onDeleteStudent?.(deleteTarget.id);
+    } else if (deleteTarget.type === 'kelas') {
+      onDeleteClass?.(deleteTarget.id);
+      setToastMessage(`Kelas "${deleteTarget.name}" berhasil dihapus.`);
+      setTimeout(() => setToastMessage(null), 3500);
     }
     setDeleteTarget(null);
   };
@@ -585,6 +637,16 @@ Wassalamu'alaikum Wr. Wb.`;
               >
                 <Plus className="w-4 h-4" />
                 <span>Tambah Mata Pelajaran</span>
+              </button>
+            )}
+
+            {activeSubTab === 'kelas' && (
+              <button
+                onClick={handleOpenAddClass}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-3.5 py-1.5 rounded-md text-xs flex items-center space-x-1.5 shadow-xs transition cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Tambah Kelas</span>
               </button>
             )}
 
@@ -684,6 +746,16 @@ Wassalamu'alaikum Wr. Wb.`;
         >
           <BookOpen className="w-4 h-4 text-indigo-300" />
           <span>Mata Pelajaran ({subjects.length})</span>
+        </button>
+
+        <button
+          onClick={() => { setActiveSubTab('kelas'); setSearchQuery(''); }}
+          className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
+            activeSubTab === 'kelas' ? 'bg-indigo-900 text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+          }`}
+        >
+          <GraduationCap className="w-4 h-4 text-indigo-300" />
+          <span>Data Kelas ({classList.length})</span>
         </button>
 
         <button
@@ -942,6 +1014,191 @@ Wassalamu'alaikum Wr. Wb.`;
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: DATA KELAS (ROMBONGAN BELAJAR) */}
+      {activeSubTab === 'kelas' && (
+        <div className="space-y-4">
+          {/* Ringkasan Statistik Kelas */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                <span>Total Rombel</span>
+                <GraduationCap className="w-3.5 h-3.5 text-indigo-500" />
+              </div>
+              <div className="text-xl font-black text-slate-900 mt-1">
+                {classList.length} <span className="text-xs font-normal text-slate-500">Kelas</span>
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                Rombongan Belajar Aktif
+              </div>
+            </div>
+
+            <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                <span>Total Peserta Didik</span>
+                <Users className="w-3.5 h-3.5 text-emerald-500" />
+              </div>
+              <div className="text-xl font-black text-slate-900 mt-1">
+                {students.length} <span className="text-xs font-normal text-slate-500">Siswa</span>
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1 flex items-center space-x-2">
+                <span className="text-indigo-600 font-bold">L: {students.filter(s => s.gender === 'L').length}</span>
+                <span>•</span>
+                <span className="text-pink-600 font-bold">P: {students.filter(s => s.gender === 'P').length}</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                <span>Rata-Rata Siswa</span>
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              </div>
+              <div className="text-xl font-black text-amber-700 mt-1">
+                {classList.length > 0 ? Math.round(students.length / classList.length) : 0} <span className="text-xs font-normal text-slate-500">Siswa/Kelas</span>
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                Kapasitas Rata-rata
+              </div>
+            </div>
+
+            <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                <span>Wali Kelas Terisi</span>
+                <UserCheck className="w-3.5 h-3.5 text-teal-500" />
+              </div>
+              <div className="text-xl font-black text-teal-700 mt-1">
+                {classList.filter(c => Boolean(localWaliKelas?.[c] || classWaliKelas?.[c])).length} <span className="text-xs font-normal text-slate-500">/ {classList.length}</span>
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                Penugasan Wali Kelas
+              </div>
+            </div>
+          </div>
+
+          {/* Tabel Rombel / Kelas */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+            <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Daftar Rombongan Belajar (Kelas)
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  Kelola nama kelas untuk jadwal pelajaran, absensi mengajar, dan buku induk siswa.
+                </p>
+              </div>
+              <button
+                onClick={handleOpenAddClass}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1.5 shadow-xs transition cursor-pointer self-start sm:self-auto"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Tambah Kelas Baru</span>
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                    <th className="py-2.5 px-3 w-12 text-center">No</th>
+                    <th className="py-2.5 px-3 w-36">Nama Kelas</th>
+                    <th className="py-2.5 px-3 w-44">Tingkat / Jenjang</th>
+                    <th className="py-2.5 px-3 text-center w-48">Jumlah Siswa</th>
+                    <th className="py-2.5 px-3">Wali Kelas</th>
+                    <th className="py-2.5 px-3 text-center w-28">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
+                  {filteredClasses.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-10 text-center text-slate-400 font-medium">
+                        <GraduationCap className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                        <p>Tidak ada data kelas yang cocok dengan pencarian.</p>
+                        <button
+                          onClick={handleOpenAddClass}
+                          className="mt-3 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg cursor-pointer"
+                        >
+                          Tambah Kelas Baru
+                        </button>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredClasses.map((cls, idx) => {
+                      const classStudents = students.filter(s => s.className === cls);
+                      const lCount = classStudents.filter(s => s.gender === 'L').length;
+                      const pCount = classStudents.filter(s => s.gender === 'P').length;
+                      const waliName = localWaliKelas?.[cls] || classWaliKelas?.[cls];
+
+                      let levelText = 'Rombel ' + cls;
+                      if (/^(VII|7)\b/i.test(cls)) levelText = 'Kelas 7 (Tingkat VII)';
+                      else if (/^(VIII|8)\b/i.test(cls)) levelText = 'Kelas 8 (Tingkat VIII)';
+                      else if (/^(IX|9)\b/i.test(cls)) levelText = 'Kelas 9 (Tingkat IX)';
+                      else if (/^(X|10)\b/i.test(cls)) levelText = 'Kelas 10 (Tingkat X)';
+                      else if (/^(XI|11)\b/i.test(cls)) levelText = 'Kelas 11 (Tingkat XI)';
+                      else if (/^(XII|12)\b/i.test(cls)) levelText = 'Kelas 12 (Tingkat XII)';
+
+                      return (
+                        <tr key={cls} className="hover:bg-slate-50 transition">
+                          <td className="py-2.5 px-3 text-center text-slate-400 font-mono">{idx + 1}</td>
+                          <td className="py-2.5 px-3">
+                            <span className="font-black text-indigo-900 bg-indigo-50/80 px-2.5 py-1 rounded-md text-xs border border-indigo-200/60 font-mono">
+                              {cls}
+                            </span>
+                          </td>
+                          <td className="py-2.5 px-3">
+                            <span className="text-slate-600 font-semibold text-xs">
+                              {levelText}
+                            </span>
+                          </td>
+                          <td className="py-2.5 px-3 text-center">
+                            <div className="inline-flex items-center space-x-2">
+                              <span className="font-extrabold text-slate-800 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md text-xs">
+                                {classStudents.length} Siswa
+                              </span>
+                              <span className="text-[10px] text-slate-500">
+                                (<span className="text-indigo-600 font-bold">L:{lCount}</span>, <span className="text-pink-600 font-bold">P:{pCount}</span>)
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-2.5 px-3">
+                            {waliName ? (
+                              <div className="flex items-center space-x-1.5 text-xs text-slate-800">
+                                <UserCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                                <span className="font-bold text-slate-900">{waliName}</span>
+                              </div>
+                            ) : (
+                              <span className="text-[11px] text-slate-400 italic">
+                                Belum ditugaskan (atur di tab Wali Kelas)
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-2.5 px-3 text-center">
+                            <div className="flex items-center justify-center space-x-1">
+                              <button
+                                onClick={() => handleOpenEditClass(cls)}
+                                title="Edit Nama Kelas"
+                                className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition cursor-pointer"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => setDeleteTarget({ type: 'kelas', id: cls, name: `Kelas ${cls}` })}
+                                title="Hapus Kelas"
+                                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -1488,6 +1745,101 @@ Wassalamu'alaikum Wr. Wb.`;
         </div>
       )}
 
+      {/* MODAL: TAMBAH / EDIT KELAS */}
+      {isAddClassOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-800 flex items-center justify-center">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                <h3 className="text-base font-extrabold text-slate-900">
+                  {editingClass ? 'Edit Nama Kelas' : 'Tambah Kelas Baru'}
+                </h3>
+              </div>
+              <button
+                onClick={() => { setIsAddClassOpen(false); setEditingClass(null); }}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddClassSubmit} className="space-y-4 mt-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Nama Rombongan Belajar (Kelas) <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: VII A, VII B, VIII A, X RPL 1, dll."
+                  value={classNameInput}
+                  onChange={e => setClassNameInput(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold uppercase focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none"
+                  autoFocus
+                />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Gunakan format standar seperti "VII A", "VIII B", "IX C", atau nama kejuruan sesuai madrasah/sekolah Anda.
+                </p>
+              </div>
+
+              {!editingClass && (
+                <div>
+                  <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                    Pilihan Cepat:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['VII A', 'VII B', 'VII C', 'VIII A', 'VIII B', 'VIII C', 'IX A', 'IX B', 'IX C', 'X A', 'XI A', 'XII A']
+                      .filter(rec => !classList.includes(rec))
+                      .slice(0, 8)
+                      .map(rec => (
+                        <button
+                          key={rec}
+                          type="button"
+                          onClick={() => setClassNameInput(rec)}
+                          className="px-2 py-1 bg-slate-100 hover:bg-indigo-100 text-slate-700 hover:text-indigo-900 border border-slate-200 rounded-md text-[11px] font-bold cursor-pointer transition"
+                        >
+                          + {rec}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {editingClass && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900">
+                  <p className="font-bold flex items-center space-x-1.5 text-amber-800 mb-1">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>Perhatian Pembaruan Kelas:</span>
+                  </p>
+                  <p className="text-[11px] text-amber-800 leading-relaxed">
+                    Mengubah nama kelas dari <strong>{editingClass}</strong> menjadi nama baru akan otomatis memperbarui data siswa, jadwal pelajaran, dan wali kelas terkait.
+                  </p>
+                </div>
+              )}
+
+              <div className="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => { setIsAddClassOpen(false); setEditingClass(null); }}
+                  className="px-4 py-2 border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-100 cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-indigo-900 hover:bg-indigo-800 text-white text-xs font-bold rounded-xl shadow-xs cursor-pointer"
+                >
+                  {editingClass ? 'Update Nama Kelas' : 'Simpan Kelas Baru'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* MODAL 3: BUKU INDUK SISWA LENGKAP (TAMBAH / EDIT) */}
       <BukuIndukModal
         isOpen={isAddStudentOpen}
@@ -1532,9 +1884,15 @@ Wassalamu'alaikum Wr. Wb.`;
               </div>
             </div>
 
-            <p className="text-xs text-slate-700 font-medium mb-5 bg-slate-50 p-3 rounded-xl border border-slate-200">
-              Apakah Anda yakin ingin menghapus data {deleteTarget.type === 'guru' ? 'Guru' : deleteTarget.type === 'mapel' ? 'Mata Pelajaran' : 'Siswa'}: <strong className="text-slate-900">{deleteTarget.name}</strong>?
+            <p className="text-xs text-slate-700 font-medium mb-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              Apakah Anda yakin ingin menghapus data {deleteTarget.type === 'guru' ? 'Guru' : deleteTarget.type === 'mapel' ? 'Mata Pelajaran' : deleteTarget.type === 'kelas' ? 'Rombongan Belajar' : 'Siswa'}: <strong className="text-slate-900">{deleteTarget.name}</strong>?
             </p>
+
+            {deleteTarget.type === 'kelas' && students.some(s => s.className === deleteTarget.id) && (
+              <div className="mb-4 p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-800">
+                Perhatian: Terdapat <strong>{students.filter(s => s.className === deleteTarget.id).length} siswa</strong> yang saat ini berada di kelas ini.
+              </div>
+            )}
 
             <div className="flex justify-end space-x-2">
               <button

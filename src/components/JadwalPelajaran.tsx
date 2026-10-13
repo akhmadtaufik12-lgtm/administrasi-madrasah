@@ -43,10 +43,13 @@ import {
   ShieldCheck,
   Eye,
   EyeOff,
-  ShieldAlert
+  ShieldAlert,
+  Upload,
+  FileText
 } from 'lucide-react';
 import { exportToCSV, printFormattedDocument } from '../utils/export';
 import { getDayNameFromDate } from '../utils/storage';
+import { UploadJadwalModal } from './UploadJadwalModal';
 
 interface JadwalPelajaranProps {
   schedules: TeachingSchedule[];
@@ -124,6 +127,10 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
   // Modal State for adding/editing schedule
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingScheduleId, setEditingScheduleId] = useState<string | null>(null);
+
+  // Modal State for uploading schedule (PDF / Excel / CSV / aSc Timetables)
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadModalTab, setUploadModalTab] = useState<'pdf' | 'file' | 'paste' | 'preset'>('pdf');
 
   // Form Fields
   const [formDay, setFormDay] = useState<DayOfWeek>('Senin');
@@ -591,6 +598,40 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
     }
   };
 
+  // Import schedules handler (Replace All or Merge)
+  const handleImportSchedules = async (newSchedules: TeachingSchedule[], mode: 'replace' | 'merge') => {
+    try {
+      let finalSchedules: TeachingSchedule[] = [];
+      if (mode === 'replace') {
+        finalSchedules = newSchedules;
+      } else {
+        // Merge: Replace any overlapping slot with imported ones, keep remaining
+        const remaining = schedules.filter(existing => {
+          const isOverwritten = newSchedules.some(n =>
+            n.day === existing.day &&
+            n.className.trim().toUpperCase() === existing.className.trim().toUpperCase() &&
+            n.periodNumber === existing.periodNumber
+          );
+          return !isOverwritten;
+        });
+        finalSchedules = [...remaining, ...newSchedules];
+      }
+
+      if (onBulkSaveSchedules) {
+        await onBulkSaveSchedules(finalSchedules);
+      } else if (onSaveAllSchedules) {
+        await onSaveAllSchedules(finalSchedules);
+      }
+
+      showToast(`Berhasil menyimpan ${newSchedules.length} sesi jadwal pelajaran (${mode === 'replace' ? 'Ganti Semua' : 'Gabungkan / Timpa'})!`);
+      setIsUploadModalOpen(false);
+    } catch (err: any) {
+      console.error('Failed to import schedules:', err);
+      showToast('Gagal mengimpor jadwal pelajaran ke sistem.');
+      throw err;
+    }
+  };
+
   return (
     <div className="space-y-6 pb-16">
       
@@ -642,6 +683,33 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
                 </div>
               )}
               <button
+                type="button"
+                onClick={() => {
+                  setUploadModalTab('pdf');
+                  setIsUploadModalOpen(true);
+                }}
+                className="bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-black px-3.5 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 shadow-sm border border-emerald-400/50 transition cursor-pointer"
+                title="Upload File PDF Jadwal Pelajaran (Format aSc Timetables)"
+              >
+                <FileText className="w-3.5 h-3.5 text-amber-300" />
+                <span>Upload PDF Jadwal</span>
+                <span className="bg-amber-400 text-emerald-950 text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-tighter">
+                  PDF
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setUploadModalTab('file');
+                  setIsUploadModalOpen(true);
+                }}
+                className="bg-emerald-800/80 hover:bg-emerald-700 text-emerald-100 font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 border border-emerald-600/40 transition cursor-pointer"
+                title="Upload File Excel / CSV (.xlsx / .csv)"
+              >
+                <Upload className="w-3.5 h-3.5 text-emerald-300" />
+                <span>Upload Excel</span>
+              </button>
+              <button
                 onClick={() => requestAdminAuth({ type: 'sync' })}
                 className="bg-indigo-600/90 hover:bg-indigo-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 shadow-xs border border-indigo-400/30 transition cursor-pointer"
                 title="Muat 368 sesi jadwal resmi dari sistem aSc Timetables (Perlu Kode Super Admin)"
@@ -651,7 +719,7 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
               </button>
               <button
                 onClick={() => requestAdminAuth({ type: 'add' })}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-3.5 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 shadow-xs transition cursor-pointer"
+                className="bg-emerald-700/80 hover:bg-emerald-600 text-white font-extrabold px-3.5 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 shadow-xs border border-emerald-500/30 transition cursor-pointer"
                 title="Input Jadwal Pelajaran Baru (Perlu Kode Super Admin)"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -919,16 +987,42 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
             </button>
           </div>
 
-          {/* Quick Search */}
-          <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Cari guru, mapel, kelas..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+          {/* Quick Search & Actions */}
+          <div className="flex items-center space-x-2 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => {
+                setUploadModalTab('pdf');
+                setIsUploadModalOpen(true);
+              }}
+              className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-extrabold text-xs flex items-center space-x-1.5 shadow-2xs transition cursor-pointer shrink-0"
+              title="Upload File PDF Jadwal Pelajaran (aSc Timetables)"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-300" />
+              <span>Upload PDF</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setUploadModalTab('file');
+                setIsUploadModalOpen(true);
+              }}
+              className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 rounded-xl font-bold text-xs flex items-center space-x-1.5 shadow-2xs transition cursor-pointer shrink-0"
+              title="Upload Jadwal File Excel (.xlsx / .csv)"
+            >
+              <Upload className="w-3.5 h-3.5 text-emerald-700" />
+              <span className="hidden sm:inline">Excel</span>
+            </button>
+            <div className="relative flex-1 sm:w-64">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Cari guru, mapel, kelas..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
           </div>
         </div>
 
@@ -1018,9 +1112,23 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
                 ))}
               </select>
             </div>
-            <div className="flex items-center space-x-2 text-[11px] text-slate-500 font-medium">
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Matriks Kurikulum diproteksi kode Super Admin untuk mencegah salah edit/hapus.</span>
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setUploadModalTab('pdf');
+                  setIsUploadModalOpen(true);
+                }}
+                className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-xs flex items-center space-x-1.5 shadow-2xs transition cursor-pointer"
+                title="Upload File PDF / Excel Jadwal Matriks aSc Timetables"
+              >
+                <FileText className="w-3.5 h-3.5 text-amber-300" />
+                <span>Upload PDF Matriks</span>
+              </button>
+              <div className="hidden sm:flex items-center space-x-1.5 text-[11px] text-slate-500 font-medium">
+                <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                <span>Matriks Kurikulum diproteksi PIN Super Admin.</span>
+              </div>
             </div>
           </div>
         )}
@@ -1780,11 +1888,32 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
         </div>
       )}
 
+      {/* MODAL UPLOAD JADWAL PELAJARAN (PDF / aSc Timetables / Excel / CSV) */}
+      {isUploadModalOpen && (
+        <UploadJadwalModal
+          isOpen={isUploadModalOpen}
+          onClose={() => setIsUploadModalOpen(false)}
+          currentSchedules={schedules}
+          teachers={teachers}
+          subjects={subjects}
+          classList={classList}
+          schoolName={schoolOfficials?.namaSekolah || 'Madrasah'}
+          academicYear={academicYear}
+          semester={semester}
+          initialTab={uploadModalTab}
+          onImport={handleImportSchedules}
+        />
+      )}
+
       {/* PRINTABLE OFFICIAL SCHEDULE DOCUMENT (Hidden from regular screen, formatted for print) */}
       <div id="printable-schedule-doc" className="hidden print:block p-8 bg-white text-black font-sans">
         <div className="text-center border-b-2 border-black pb-4 mb-6">
-          <h1 className="text-lg font-bold uppercase tracking-wider">KEMENTERIAN AGAMA REPUBLIK INDONESIA</h1>
-          <h2 className="text-xl font-extrabold uppercase">MTS MANBAUL ISLAM</h2>
+          <h1 className="text-lg font-bold uppercase tracking-wider">
+            {schoolOfficials?.namaYayasan || 'KEMENTERIAN AGAMA REPUBLIK INDONESIA'}
+          </h1>
+          <h2 className="text-xl font-extrabold uppercase">
+            {schoolOfficials?.namaSekolah || 'Madrasah'}
+          </h2>
           <p className="text-xs text-slate-700 mt-1">
             Jadwal Pelajaran dan Mengajar Tatap Muka Tahun Pelajaran {academicYear} — {semester}
           </p>

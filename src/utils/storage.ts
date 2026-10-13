@@ -157,7 +157,25 @@ export function getSchoolConfig(schoolId?: SchoolId): SchoolConfig {
 
 export function getClassesForSchool(schoolId?: SchoolId): string[] {
   const id = schoolId || getActiveSchoolId();
+  try {
+    const raw = safeLocalStorageGet(getSchoolStorageKey('classes', id));
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (_) {}
   return SCHOOL_CONFIGS[id]?.classes || CLASSES_LIST;
+}
+
+export function saveClassesForSchool(classes: string[], schoolId?: SchoolId): void {
+  const id = schoolId || getActiveSchoolId();
+  try {
+    safeLocalStorageSet(getSchoolStorageKey('classes', id), JSON.stringify(classes));
+  } catch (e) {
+    console.error('Failed to save classes for school', e);
+  }
 }
 
 export interface AcademicSettings {
