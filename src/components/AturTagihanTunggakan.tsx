@@ -236,7 +236,7 @@ export const AturTagihanTunggakan: React.FC<AturTagihanTunggakanProps> = ({
     billSettings.paymentAccountInfo || {
       bankName: 'Bank Syariah Indonesia (BSI)',
       accountNumber: '7123456789',
-      accountHolder: 'MTs MANBAUL ISLAM',
+      accountHolder: schoolOfficials?.namaSekolah || 'Madrasah',
       qrisImageUrl: '',
       paymentInstructions: 'Transfer via BSI / ATM Bersama dengan berita transfer: [Nama Siswa - Kelas - Keperluan]. Konfirmasi bukti transfer ke nomor WhatsApp Bendahara.',
       contactPersonPhone: '081234567890'
@@ -1093,7 +1093,7 @@ _Hormat kami,_
       <div style="font-family: sans-serif; padding: 20px; color: #1e293b;">
         <div style="text-align: center; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 16px;">
           <h2 style="margin: 0; font-size: 18px;">REKAPITULASI STATUS PEMBAYARAN & TUNGGAKAN SISWA</h2>
-          <h3 style="margin: 4px 0 0; font-size: 14px; color: #475569;">MTs MANBAUL ISLAM • ${titleClass}</h3>
+          <h3 style="margin: 4px 0 0; font-size: 14px; color: #475569;">${(schoolOfficials?.namaSekolah || 'MADRASAH').toUpperCase()} • ${titleClass}</h3>
           <p style="margin: 4px 0 0; font-size: 11px; color: #64748b;">Tahun Pelajaran ${academicYear} • ${semester} • Dicetak: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
         </div>
 

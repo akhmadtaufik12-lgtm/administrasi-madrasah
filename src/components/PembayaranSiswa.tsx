@@ -1084,7 +1084,7 @@ export const PembayaranSiswa: React.FC<PembayaranSiswaProps> = ({
     const formattedAmount = `Rp ${tx.amount.toLocaleString('id-ID')}`;
     const message = `Assalamu'alaikum Wr. Wb.
 
-*BUKTI PEMBAYARAN SISWA - MTS MANBAUL ISLAM*
+*BUKTI PEMBAYARAN SISWA - ${(schoolOfficials?.namaSekolah || 'MADRASAH').toUpperCase()}*
 ---------------------------------------
 No. Kwitansi : *${tx.invoiceNumber}*
 Tanggal      : ${tx.paymentDate}
@@ -6414,11 +6414,34 @@ Wassalamu'alaikum Wr. Wb.
               
               {/* Header Madrasah */}
               <div className="text-center border-b-2 border-indigo-900 pb-3 mb-4">
-                <h3 className="text-base font-black uppercase tracking-tight text-indigo-950">
-                  MTs MANBAUL ISLAM
-                </h3>
-                <p className="text-[10px] text-slate-600 font-medium">
-                  Jl. Madrasah No. 12, Kuningan • Telp. (0232) 876543 • NSM/NPSN: 121232080012
+                <div className="flex items-center justify-center gap-2.5 mb-1">
+                  {schoolOfficials?.logoUrl && (
+                    <img
+                      src={schoolOfficials.logoUrl}
+                      alt="Logo"
+                      className="w-10 h-10 object-contain rounded shrink-0"
+                    />
+                  )}
+                  <div>
+                    {schoolOfficials?.namaYayasan && (
+                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-600 leading-tight">
+                        {schoolOfficials.namaYayasan}
+                      </h4>
+                    )}
+                    <h3 className="text-base font-black uppercase tracking-tight text-indigo-950 leading-tight">
+                      {schoolOfficials?.namaSekolah || 'MADRASAH'}
+                    </h3>
+                  </div>
+                </div>
+                <p className="text-[10px] text-slate-600 font-medium leading-relaxed">
+                  {[
+                    schoolOfficials?.alamatSekolah,
+                    schoolOfficials?.kotaSekolah,
+                    schoolOfficials?.teleponSekolah ? `Telp. ${schoolOfficials.teleponSekolah}` : '',
+                    (schoolOfficials?.nsm || schoolOfficials?.npsn)
+                      ? `NSM/NPSN: ${[schoolOfficials?.nsm, schoolOfficials?.npsn].filter(Boolean).join(' / ')}`
+                      : ''
+                  ].filter(Boolean).join(' • ') || 'Alamat Lembaga'}
                 </p>
                 <div className="mt-2 inline-block bg-indigo-900 text-white px-3 py-0.5 rounded text-[11px] font-black uppercase tracking-widest">
                   KWITANSI PEMBAYARAN
@@ -6574,26 +6597,43 @@ Wassalamu'alaikum Wr. Wb.
               {/* KOP SURAT MADRASAH */}
               <div className="border-b-4 border-double border-slate-900 pb-3 mb-4 text-center relative">
                 <div className="flex items-center justify-center space-x-3 mb-1">
-                  <div className="w-12 h-12 rounded-full bg-emerald-700 text-white flex items-center justify-center font-black text-xs border border-emerald-800">
-                    MTS
-                  </div>
+                  {schoolOfficials?.logoUrl ? (
+                    <img
+                      src={schoolOfficials.logoUrl}
+                      alt="Logo"
+                      className="w-12 h-12 object-contain rounded"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-emerald-700 text-white flex items-center justify-center font-black text-xs border border-emerald-800">
+                      {schoolOfficials?.jenjang || 'MTS'}
+                    </div>
+                  )}
                   <div>
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
-                      KEMENTERIAN AGAMA REPUBLIK INDONESIA
-                    </h4>
-                    <h5 className="text-[10px] font-bold text-slate-600">
-                      KANTOR KEMENTERIAN AGAMA KABUPATEN KUNINGAN
-                    </h5>
+                    {schoolOfficials?.namaYayasan && (
+                      <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                        {schoolOfficials.namaYayasan}
+                      </h4>
+                    )}
                     <h2 className="text-base sm:text-lg font-black uppercase text-slate-950 tracking-tight">
-                      MADRASAH TSANAWIYAH (MTS) MANBAUL ISLAM
+                      {schoolOfficials?.namaSekolah || 'MADRASAH TSANAWIYAH'}
                     </h2>
                   </div>
                 </div>
                 <p className="text-[10px] text-slate-600 leading-tight">
-                  NSM: 121232080012 • NPSN: 20278912 • Status: Terakreditasi A
+                  {[
+                    schoolOfficials?.nsm ? `NSM: ${schoolOfficials.nsm}` : '',
+                    schoolOfficials?.npsn ? `NPSN: ${schoolOfficials.npsn}` : '',
+                    schoolOfficials?.akreditasi ? `Status: Terakreditasi ${schoolOfficials.akreditasi}` : ''
+                  ].filter(Boolean).join(' • ') || 'NSM/NPSN Terdaftar'}
                 </p>
                 <p className="text-[10px] text-slate-500 leading-tight">
-                  Jl. Madrasah No. 12, Kuningan, Jawa Barat 45511 • Telp: (0232) 876543 • Email: mts.manbaulislam@kemenag.go.id
+                  {[
+                    schoolOfficials?.alamatSekolah,
+                    schoolOfficials?.kotaSekolah,
+                    schoolOfficials?.provinsi,
+                    schoolOfficials?.teleponSekolah ? `Telp: ${schoolOfficials.teleponSekolah}` : '',
+                    schoolOfficials?.emailSekolah ? `Email: ${schoolOfficials.emailSekolah}` : ''
+                  ].filter(Boolean).join(' • ') || 'Alamat Madrasah'}
                 </p>
               </div>
 
@@ -6815,26 +6855,43 @@ Wassalamu'alaikum Wr. Wb.
               {/* KOP SURAT MADRASAH */}
               <div className="border-b-4 border-double border-slate-900 pb-3 mb-4 text-center relative">
                 <div className="flex items-center justify-center space-x-3 mb-1">
-                  <div className="w-12 h-12 rounded-full bg-emerald-700 text-white flex items-center justify-center font-black text-xs border border-emerald-800">
-                    MTS
-                  </div>
+                  {schoolOfficials?.logoUrl ? (
+                    <img
+                      src={schoolOfficials.logoUrl}
+                      alt="Logo"
+                      className="w-12 h-12 object-contain rounded"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-emerald-700 text-white flex items-center justify-center font-black text-xs border border-emerald-800">
+                      {schoolOfficials?.jenjang || 'MTS'}
+                    </div>
+                  )}
                   <div>
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
-                      KEMENTERIAN AGAMA REPUBLIK INDONESIA
-                    </h4>
-                    <h5 className="text-[10px] font-bold text-slate-600">
-                      KANTOR KEMENTERIAN AGAMA KABUPATEN KUNINGAN
-                    </h5>
+                    {schoolOfficials?.namaYayasan && (
+                      <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                        {schoolOfficials.namaYayasan}
+                      </h4>
+                    )}
                     <h2 className="text-base sm:text-lg font-black uppercase text-slate-950 tracking-tight">
-                      MADRASAH TSANAWIYAH (MTS) MANBAUL ISLAM
+                      {schoolOfficials?.namaSekolah || 'MADRASAH TSANAWIYAH'}
                     </h2>
                   </div>
                 </div>
                 <p className="text-[10px] text-slate-600 leading-tight">
-                  NSM: 121232080012 • NPSN: 20278912 • Status: Terakreditasi A
+                  {[
+                    schoolOfficials?.nsm ? `NSM: ${schoolOfficials.nsm}` : '',
+                    schoolOfficials?.npsn ? `NPSN: ${schoolOfficials.npsn}` : '',
+                    schoolOfficials?.akreditasi ? `Status: Terakreditasi ${schoolOfficials.akreditasi}` : ''
+                  ].filter(Boolean).join(' • ') || 'NSM/NPSN Terdaftar'}
                 </p>
                 <p className="text-[10px] text-slate-500 leading-tight">
-                  Jl. Madrasah No. 12, Kuningan, Jawa Barat 45511 • Telp: (0232) 876543 • Email: mts.manbaulislam@kemenag.go.id
+                  {[
+                    schoolOfficials?.alamatSekolah,
+                    schoolOfficials?.kotaSekolah,
+                    schoolOfficials?.provinsi,
+                    schoolOfficials?.teleponSekolah ? `Telp: ${schoolOfficials.teleponSekolah}` : '',
+                    schoolOfficials?.emailSekolah ? `Email: ${schoolOfficials.emailSekolah}` : ''
+                  ].filter(Boolean).join(' • ') || 'Alamat Madrasah'}
                 </p>
               </div>
 
@@ -7485,17 +7542,27 @@ Wassalamu'alaikum Wr. Wb.
               
               {/* Kop Madrasah */}
               <div className="text-center border-b-2 border-slate-900 pb-3 space-y-0.5">
-                <h4 className="text-xs font-bold text-slate-600 uppercase tracking-widest">
-                  YAYASAN PENDIDIKAN ISLAM MANBAUL HUDA
-                </h4>
+                {schoolOfficials?.namaYayasan && (
+                  <h4 className="text-xs font-bold text-slate-600 uppercase tracking-widest">
+                    {schoolOfficials.namaYayasan}
+                  </h4>
+                )}
                 <h2 className="text-base font-black text-slate-900 uppercase tracking-tight">
-                  MADRASAH TSANAWIYAH (MTs) MANBAUL ISLAM
+                  {schoolOfficials?.namaSekolah || 'MADRASAH TSANAWIYAH'}
                 </h2>
                 <p className="text-[10px] text-slate-500">
-                  Dusun Wage RT 05 RW 02 Desa Kertawinangun Kec. Mandirancan Kab. Kuningan Jawa Barat 45558
+                  {[
+                    schoolOfficials?.alamatSekolah,
+                    schoolOfficials?.kotaSekolah,
+                    schoolOfficials?.provinsi
+                  ].filter(Boolean).join(', ') || 'Alamat Lembaga'}
                 </p>
                 <p className="text-[10px] text-slate-500 font-medium">
-                  NSM: 121232080035 | NPSN: 20278912 | Status: Terakreditasi
+                  {[
+                    schoolOfficials?.nsm ? `NSM: ${schoolOfficials.nsm}` : '',
+                    schoolOfficials?.npsn ? `NPSN: ${schoolOfficials.npsn}` : '',
+                    schoolOfficials?.akreditasi ? `Status: Terakreditasi ${schoolOfficials.akreditasi}` : ''
+                  ].filter(Boolean).join(' | ') || 'Status: Terakreditasi'}
                 </p>
               </div>
 
