@@ -276,7 +276,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!accessCode.trim()) {
-      setErrorMsg('Silakan masukkan Kode Siswa, Kode Guru ("madrasahhebat"), atau Sandi Super Admin!');
+      setErrorMsg('Silakan masukkan Kode Akses Guru, NISN Siswa, atau Sandi Super Admin!');
       return;
     }
     setIsSubmitting(true);
@@ -285,7 +285,7 @@ export const PortalGate: React.FC<PortalGateProps> = ({
     setTimeout(() => {
       const success = verifyAndUnlock(accessCode, 'main');
       if (!success) {
-        setErrorMsg('Akses Ditolak! Hanya kode siswa yang terdata di Data Master, kode "madrasahhebat", atau kode Super Admin yang diizinkan.');
+        setErrorMsg('Akses Ditolak! Kode Guru, NISN Siswa, atau Sandi Super Admin tidak valid.');
         setIsSubmitting(false);
       }
     }, 250);
@@ -377,203 +377,219 @@ export const PortalGate: React.FC<PortalGateProps> = ({
         </p>
       </div>
 
-      {/* Main Container - 5-Card Responsive Grid */}
-      <div className="w-full max-w-7xl my-auto z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5 sm:gap-4 py-3 sm:py-6">
-        
-        {/* Card 1: Portal Akses Utama (Guru & Wali Siswa) */}
-        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-white/20 text-slate-800 flex flex-col justify-between hover:shadow-2xl transition">
-          <div>
-            <div className="flex items-center space-x-2.5 mb-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 shadow-2xs">
-                <ShieldCheck className="w-4.5 h-4.5 text-emerald-700" />
+      {/* Main Container: Focused on Guru & Siswa, with Compact Secondary Portals */}
+      <div className="w-full max-w-5xl my-auto z-10 flex flex-col items-center py-4 sm:py-6 space-y-5 sm:space-y-6">
+
+        {/* ========================================================================= */}
+        {/* PRIMARY HERO CARD: AKSES UTAMA GURU & SISWA */}
+        {/* ========================================================================= */}
+        <div className="w-full max-w-xl bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-7 shadow-2xl border-2 border-emerald-400/40 text-slate-800 relative hover:border-emerald-400/70 transition-all duration-300">
+          
+          {/* Decorative Corner Accent */}
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-100/60 to-transparent rounded-tr-3xl pointer-events-none"></div>
+
+          {/* Card Header */}
+          <div className="flex items-start justify-between gap-3 mb-3.5">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-800 text-white flex items-center justify-center shrink-0 shadow-md ring-4 ring-emerald-100">
+                <ShieldCheck className="w-6 h-6 text-emerald-200" />
               </div>
               <div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                  Akses Utama
-                </span>
-                <h2 className="text-sm font-extrabold text-slate-900 leading-tight">
-                  Guru & Siswa
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2.5 py-0.5 rounded-full">
+                    Akses Utama
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">
+                    {displayShortName}
+                  </span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight mt-0.5">
+                  Portal Guru & Siswa
                 </h2>
               </div>
             </div>
+          </div>
 
-            <p className="text-[11px] text-slate-500 leading-snug mb-3 font-normal">
-              Masuk dengan Kode Guru untuk KBM, atau NISN / Kode Siswa untuk Orang Tua di <strong>{displayShortName}</strong>.
-            </p>
+          <p className="text-xs text-slate-600 leading-relaxed mb-4">
+            Satu pintu masuk terintegrasi untuk <strong>Bapak/Ibu Guru</strong> (Jurnal KBM, Absensi, Penilaian, RPP) dan <strong>Siswa / Orang Tua</strong> (Pantau Kehadiran, Nilai & Transparansi Keuangan).
+          </p>
 
-            <form onSubmit={handleSubmit} className="space-y-2.5">
-              <div>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
-                    <KeyRound className="w-3.5 h-3.5" />
-                  </div>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+            <div>
+              <label htmlFor="portal-code-input" className="block text-xs font-bold text-slate-700 mb-1.5">
+                Masukkan Kode Akses Guru atau NISN / Kode Siswa:
+              </label>
 
-                  <input
-                    id="portal-code-input"
-                    type={showCode ? 'text' : 'password'}
-                    required
-                    value={accessCode}
-                    onChange={(e) => {
-                      setAccessCode(e.target.value);
-                      if (errorMsg) setErrorMsg('');
-                    }}
-                    placeholder="Kode Guru / NISN..."
-                    className={`w-full pl-8 pr-8 py-2 bg-slate-50 border rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 transition ${
-                      errorMsg
-                        ? 'border-rose-400 focus:ring-rose-500'
-                        : 'border-slate-300 focus:ring-emerald-600 focus:border-emerald-600'
-                    }`}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => setShowCode(!showCode)}
-                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
-                  >
-                    {showCode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                  </button>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-emerald-700">
+                  <KeyRound className="w-4 h-4" />
                 </div>
 
-                {errorMsg && (
-                  <div className="mt-1.5 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 p-1.5 rounded-lg flex items-center space-x-1">
-                    <Lock className="w-3 h-3 shrink-0 text-rose-500" />
-                    <span>{errorMsg}</span>
-                  </div>
-                )}
+                <input
+                  id="portal-code-input"
+                  type={showCode ? 'text' : 'password'}
+                  required
+                  value={accessCode}
+                  onChange={(e) => {
+                    setAccessCode(e.target.value);
+                    if (errorMsg) setErrorMsg('');
+                  }}
+                  placeholder="Masukkan Kode Guru atau NISN Siswa..."
+                  className={`w-full pl-9 pr-10 py-3 bg-slate-50 border-2 rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-4 transition ${
+                    errorMsg
+                      ? 'border-rose-400 focus:ring-rose-200 focus:border-rose-500'
+                      : 'border-emerald-200 focus:ring-emerald-100 focus:border-emerald-600'
+                  }`}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowCode(!showCode)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 transition cursor-pointer"
+                  title={showCode ? 'Sembunyikan' : 'Lihat Kode'}
+                >
+                  {showCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
 
-              <div className="flex items-center space-x-1.5">
+              {errorMsg && (
+                <div className="mt-2 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 p-2.5 rounded-xl flex items-center space-x-2">
+                  <Lock className="w-4 h-4 shrink-0 text-rose-500" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between text-xs">
+              <label htmlFor="remember-device" className="flex items-center space-x-2 cursor-pointer text-slate-600 font-medium">
                 <input
                   id="remember-device"
                   type="checkbox"
                   checked={rememberDevice}
                   onChange={(e) => setRememberDevice(e.target.checked)}
-                  className="w-3 h-3 text-emerald-600 bg-slate-100 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer"
+                  className="w-3.5 h-3.5 text-emerald-600 bg-slate-100 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer"
                 />
-                <label htmlFor="remember-device" className="text-[10px] font-semibold text-slate-600 cursor-pointer">
-                  Ingat perangkat ini
-                </label>
-              </div>
+                <span>Ingat perangkat ini</span>
+              </label>
 
-              <button
-                type="submit"
-                disabled={isSubmitting || !accessCode.trim()}
-                className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
-              >
-                <span>{isSubmitting ? 'Memverifikasi...' : `Masuk ${displayShortName}`}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </form>
+              <span className="text-[11px] text-slate-400 font-medium">
+                Aman & Terenkripsi
+              </span>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting || !accessCode.trim()}
+              className="w-full bg-gradient-to-r from-emerald-600 via-emerald-700 to-green-800 hover:from-emerald-700 hover:to-green-900 text-white font-black py-3 px-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-sm cursor-pointer disabled:opacity-50"
+            >
+              <span>{isSubmitting ? 'Memverifikasi...' : `Masuk ke Portal ${displayShortName}`}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+
+          {/* Quick Guidance for Students & Parents */}
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-center text-[11px] text-slate-500">
+            <span>🎓 Siswa & Wali Murid: Gunakan <code className="bg-slate-100 text-slate-700 font-mono px-1.5 py-0.5 rounded text-[10px] font-bold">NISN / Kode Siswa</code></span>
           </div>
         </div>
 
-        {/* Card 2: Portal Waka Kurikulum & Ujian (STS / SAS / AM) */}
-        <div className="bg-gradient-to-b from-[#0e4322]/80 to-slate-900/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-emerald-500/40 text-slate-100 flex flex-col justify-between hover:shadow-2xl hover:border-emerald-400/80 transition ring-1 ring-emerald-500/30">
-          <div>
-            <div className="flex items-center space-x-2.5 mb-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 flex items-center justify-center shrink-0 shadow-2xs">
-                <CalendarCheck className="w-4.5 h-4.5 text-emerald-400" />
-              </div>
-              <div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-500/20 border border-emerald-400/30 px-2 py-0.5 rounded-full">
-                  STS • SAS • AM
-                </span>
-                <h2 className="text-sm font-extrabold text-white leading-tight">
-                  Portal Kurikulum
-                </h2>
-              </div>
-            </div>
+        {/* ========================================================================= */}
+        {/* SECONDARY ROW: 4 COMPACT PORTALS (Kurikulum, Keuangan, Perpustakaan, Ekskul) */}
+        {/* ========================================================================= */}
+        <div className="w-full">
+          <div className="flex items-center justify-center space-x-2 text-emerald-200/80 text-[10px] font-black uppercase tracking-wider mb-2.5">
+            <span className="h-px bg-emerald-500/30 flex-1 max-w-[80px]"></span>
+            <span>Portal Khusus & Layanan Tambahan</span>
+            <span className="h-px bg-emerald-500/30 flex-1 max-w-[80px]"></span>
+          </div>
 
-            <p className="text-[11px] text-emerald-100/85 leading-snug mb-3 font-normal">
-              Pengaturan kegiatan ujian (STS/SAS), pembagian ruang otomatis, jadwal pengawas & cetak kartu peserta.
-            </p>
-
-            <form onSubmit={handleKurikulumSubmit} className="space-y-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 w-full">
+            
+            {/* 1. Kurikulum (Compact) */}
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 border border-emerald-500/30 hover:border-emerald-400/60 shadow-lg text-slate-200 flex flex-col justify-between transition">
               <div>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-emerald-300/60">
-                    <KeyRound className="w-3.5 h-3.5" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0">
+                      <CalendarCheck className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-black text-white leading-tight">Kurikulum</h3>
+                      <p className="text-[10px] text-emerald-400 font-semibold leading-none">STS • SAS • AM</p>
+                    </div>
                   </div>
+                  <span className="text-[9px] font-bold text-emerald-300/70 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                    Ujian
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-400 leading-snug mb-2 line-clamp-2">
+                  Jadwal pengawas, ruang ujian & cetak kartu peserta.
+                </p>
+              </div>
 
+              <form onSubmit={handleKurikulumSubmit} className="space-y-1.5">
+                <div className="relative">
                   <input
-                    id="kurikulum-code-input"
                     type={showKurikulumCode ? 'text' : 'password'}
                     value={kurikulumCode}
                     onChange={(e) => {
                       setKurikulumCode(e.target.value);
                       if (kurikulumErrorMsg) setKurikulumErrorMsg('');
                     }}
-                    placeholder="Masukkan Kode Akses Kurikulum..."
-                    className={`w-full pl-8 pr-8 py-2 bg-slate-900/90 border rounded-xl text-xs font-bold text-white placeholder:text-slate-400 focus:bg-slate-900 focus:outline-none focus:ring-2 transition ${
-                      kurikulumErrorMsg
-                        ? 'border-rose-400 focus:ring-rose-500'
-                        : 'border-emerald-400/50 focus:ring-emerald-400 focus:border-emerald-400'
-                    }`}
+                    placeholder="Kode Kurikulum..."
+                    className="w-full pl-2.5 pr-7 py-1.5 bg-slate-950/70 border border-emerald-500/40 rounded-xl text-[11px] font-semibold text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-400"
                   />
-
                   <button
                     type="button"
                     onClick={() => setShowKurikulumCode(!showKurikulumCode)}
-                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-emerald-300/60 hover:text-emerald-200 transition cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-2 flex items-center text-emerald-400/60 hover:text-emerald-300"
+                    title={showKurikulumCode ? 'Sembunyikan' : 'Lihat'}
                   >
-                    {showKurikulumCode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    {showKurikulumCode ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                   </button>
                 </div>
-
                 {kurikulumErrorMsg && (
-                  <div className="mt-1.5 text-[10px] font-bold text-rose-200 bg-rose-950/80 border border-rose-500/40 p-1.5 rounded-lg flex items-center space-x-1">
-                    <Lock className="w-3 h-3 shrink-0 text-rose-400" />
-                    <span>{kurikulumErrorMsg}</span>
-                  </div>
+                  <p className="text-[9px] text-rose-300 bg-rose-950/80 p-1 rounded font-bold leading-tight">
+                    {kurikulumErrorMsg}
+                  </p>
                 )}
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmittingKurikulum}
-                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
-              >
-                <span>{isSubmittingKurikulum ? 'Membuka...' : 'Buka Portal Kurikulum'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-              <p className="text-[10px] text-emerald-300/80 text-center font-medium mt-1 flex items-center justify-center space-x-1">
-                <Lock className="w-3 h-3 text-emerald-400 shrink-0" />
-                <span>Kode akses diatur khusus oleh Super Admin</span>
-              </p>
-            </form>
-          </div>
-        </div>
-
-        {/* Card 3: Portal Bendahara & Keuangan */}
-        <div className="bg-gradient-to-b from-amber-950/40 to-slate-900/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-amber-500/40 text-slate-100 flex flex-col justify-between hover:shadow-2xl hover:border-amber-400/60 transition">
-          <div>
-            <div className="flex items-center space-x-2.5 mb-2.5">
-              <div className="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-300 border border-amber-400/40 flex items-center justify-center shrink-0 shadow-2xs">
-                <WalletCards className="w-4.5 h-4.5 text-amber-400" />
-              </div>
-              <div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/20 border border-amber-400/30 px-2 py-0.5 rounded-full">
-                  Keuangan & SPP
-                </span>
-                <h2 className="text-sm font-extrabold text-white leading-tight">
-                  Portal Bendahara
-                </h2>
-              </div>
+                <button
+                  type="submit"
+                  disabled={isSubmittingKurikulum}
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 px-2 rounded-xl text-[11px] transition flex items-center justify-center space-x-1 cursor-pointer disabled:opacity-50"
+                >
+                  <span>{isSubmittingKurikulum ? 'Membuka...' : 'Buka Kurikulum'}</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </form>
             </div>
 
-            <p className="text-[11px] text-amber-100/80 leading-snug mb-3 font-normal">
-              Akses khusus Bendahara {displayShortName} untuk SPP, Uang Gedung, Kas & Setoran.
-            </p>
-
-            <form onSubmit={handleBendaharaSubmit} className="space-y-2.5">
+            {/* 2. Keuangan / Bendahara (Compact) */}
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 border border-amber-500/30 hover:border-amber-400/60 shadow-lg text-slate-200 flex flex-col justify-between transition">
               <div>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-amber-300/60">
-                    <KeyRound className="w-3.5 h-3.5" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0">
+                      <WalletCards className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-black text-white leading-tight">Keuangan</h3>
+                      <p className="text-[10px] text-amber-400 font-semibold leading-none">Bendahara & SPP</p>
+                    </div>
                   </div>
+                  <span className="text-[9px] font-bold text-amber-300/70 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                    Kas
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-400 leading-snug mb-2 line-clamp-2">
+                  Kasir SPP, setoran uang gedung & rekap kas.
+                </p>
+              </div>
 
+              <form onSubmit={handleBendaharaSubmit} className="space-y-1.5">
+                <div className="relative">
                   <input
-                    id="bendahara-code-input"
                     type={showBendaharaCode ? 'text' : 'password'}
                     required
                     value={bendaharaCode}
@@ -581,111 +597,101 @@ export const PortalGate: React.FC<PortalGateProps> = ({
                       setBendaharaCode(e.target.value);
                       if (bendaharaErrorMsg) setBendaharaErrorMsg('');
                     }}
-                    placeholder="Kode Akses Bendahara..."
-                    className={`w-full pl-8 pr-8 py-2 bg-slate-900/80 border rounded-xl text-xs font-bold text-white placeholder:text-slate-400 focus:bg-slate-900 focus:outline-none focus:ring-2 transition ${
-                      bendaharaErrorMsg
-                        ? 'border-rose-400 focus:ring-rose-500'
-                        : 'border-amber-400/40 focus:ring-amber-400 focus:border-amber-400'
-                    }`}
+                    placeholder="Kode Bendahara..."
+                    className="w-full pl-2.5 pr-7 py-1.5 bg-slate-950/70 border border-amber-500/40 rounded-xl text-[11px] font-semibold text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400"
                   />
-
                   <button
                     type="button"
                     onClick={() => setShowBendaharaCode(!showBendaharaCode)}
-                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-amber-300/60 hover:text-amber-200 transition cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-2 flex items-center text-amber-400/60 hover:text-amber-300"
+                    title={showBendaharaCode ? 'Sembunyikan' : 'Lihat'}
                   >
-                    {showBendaharaCode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    {showBendaharaCode ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                   </button>
                 </div>
-
                 {bendaharaErrorMsg && (
-                  <div className="mt-1.5 text-[10px] font-bold text-rose-200 bg-rose-950/80 border border-rose-500/40 p-1.5 rounded-lg flex items-center space-x-1">
-                    <Lock className="w-3 h-3 shrink-0 text-rose-400" />
-                    <span>{bendaharaErrorMsg}</span>
-                  </div>
+                  <p className="text-[9px] text-rose-300 bg-rose-950/80 p-1 rounded font-bold leading-tight">
+                    {bendaharaErrorMsg}
+                  </p>
                 )}
+                <button
+                  type="submit"
+                  disabled={isSubmittingBendahara || !bendaharaCode.trim()}
+                  className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-1.5 px-2 rounded-xl text-[11px] transition flex items-center justify-center space-x-1 cursor-pointer disabled:opacity-50"
+                >
+                  <span>{isSubmittingBendahara ? 'Membuka...' : 'Buka Bendahara'}</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </form>
+            </div>
+
+            {/* 3. Perpustakaan (Compact) */}
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 border border-emerald-500/20 hover:border-emerald-400/50 shadow-lg text-slate-200 flex flex-col justify-between transition">
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-7 h-7 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0">
+                      <Library className="w-4 h-4 text-teal-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-black text-white leading-tight">Perpustakaan</h3>
+                      <p className="text-[10px] text-teal-400 font-semibold leading-none">E-Book & Modul</p>
+                    </div>
+                  </div>
+                  <span className="text-[9px] font-bold text-teal-300/70 bg-teal-500/10 px-1.5 py-0.5 rounded">
+                    Buku
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-400 leading-snug mb-3 line-clamp-2">
+                  Koleksi digital, materi modul belajar & katalog baca.
+                </p>
               </div>
 
-              <button
-                type="submit"
-                disabled={isSubmittingBendahara || !bendaharaCode.trim()}
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs cursor-pointer disabled:opacity-50"
+              <a
+                href="https://perpus-digitalmbi.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-slate-800 hover:bg-emerald-700 text-white font-bold py-1.5 px-2 rounded-xl text-[11px] transition flex items-center justify-center space-x-1 cursor-pointer border border-slate-700 hover:border-emerald-500"
               >
-                <span>{isSubmittingBendahara ? 'Membuka...' : 'Buka Portal Bendahara'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-              <p className="text-[10px] text-amber-300/80 text-center font-medium mt-1 flex items-center justify-center space-x-1">
-                <Lock className="w-3 h-3 text-amber-400 shrink-0" />
-                <span>Kode akses diatur khusus oleh Super Admin</span>
-              </p>
-            </form>
-          </div>
-        </div>
-
-        {/* Card 4: Portal Perpustakaan Digital */}
-        <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-emerald-500/30 text-slate-100 flex flex-col justify-between hover:shadow-2xl hover:border-emerald-400/60 transition">
-          <div>
-            <div className="flex items-center space-x-2.5 mb-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center justify-center shrink-0 shadow-2xs">
-                <Library className="w-4.5 h-4.5" />
-              </div>
-              <div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-500/20 border border-emerald-400/30 px-2 py-0.5 rounded-full">
-                  Literasi Digital
-                </span>
-                <h2 className="text-sm font-extrabold text-white leading-tight">
-                  Perpustakaan
-                </h2>
-              </div>
+                <span>Buka E-Perpus</span>
+                <ExternalLink className="w-3 h-3 text-emerald-300" />
+              </a>
             </div>
 
-            <p className="text-[11px] text-slate-300 leading-relaxed mb-4 font-normal">
-              Koleksi e-book, modul materi belajar, katalog referensi & pojok baca madrasah / sekolah.
-            </p>
-          </div>
-
-          <a
-            href="https://perpus-digitalmbi.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs group cursor-pointer"
-          >
-            <span>Buka Perpustakaan</span>
-            <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-          </a>
-        </div>
-
-        {/* Card 5: Portal Ekstrakulikuler Siswa */}
-        <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border border-emerald-400/30 text-slate-100 flex flex-col justify-between hover:shadow-2xl hover:border-emerald-400/60 transition">
-          <div>
-            <div className="flex items-center space-x-2.5 mb-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 flex items-center justify-center shrink-0 shadow-2xs">
-                <Trophy className="w-4.5 h-4.5" />
-              </div>
+            {/* 4. Ekstrakulikuler (Compact) */}
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 border border-emerald-500/20 hover:border-emerald-400/50 shadow-lg text-slate-200 flex flex-col justify-between transition">
               <div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-500/20 border border-emerald-400/30 px-2 py-0.5 rounded-full">
-                  Bakat & Minat
-                </span>
-                <h2 className="text-sm font-extrabold text-white leading-tight">
-                  Ekstrakulikuler
-                </h2>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0">
+                      <Trophy className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-black text-white leading-tight">Ekstrakulikuler</h3>
+                      <p className="text-[10px] text-emerald-400 font-semibold leading-none">Bakat & Prestasi</p>
+                    </div>
+                  </div>
+                  <span className="text-[9px] font-bold text-emerald-300/70 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                    Ekskul
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-400 leading-snug mb-3 line-clamp-2">
+                  Pendaftaran ekskul, jadwal latihan & absensi pembina.
+                </p>
               </div>
+
+              <a
+                href="https://administrasi-ekstrakulikuler-mts-manbau-islam.ai.studio/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-slate-800 hover:bg-emerald-700 text-white font-bold py-1.5 px-2 rounded-xl text-[11px] transition flex items-center justify-center space-x-1 cursor-pointer border border-slate-700 hover:border-emerald-500"
+              >
+                <span>Buka Ekskul</span>
+                <ExternalLink className="w-3 h-3 text-emerald-300" />
+              </a>
             </div>
 
-            <p className="text-[11px] text-slate-300 leading-relaxed mb-4 font-normal">
-              Pendaftaran anggota, jadwal latihan mingguan, absensi pembina & portofolio prestasi siswa.
-            </p>
           </div>
-
-          <a
-            href="https://administrasi-ekstrakulikuler-mts-manbau-islam.ai.studio/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-slate-950 font-black py-2.5 px-3 rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs group cursor-pointer"
-          >
-            <span>Portal Ekskul</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
         </div>
 
       </div>
