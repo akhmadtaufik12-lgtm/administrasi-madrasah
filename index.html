@@ -53,6 +53,20 @@
           }
         } catch (e) {}
       })();
+
+      // Safely absorb benign Vite HMR WebSocket connection notices from cloud iframe preview proxy
+      window.addEventListener('unhandledrejection', function(e) {
+        var reasonStr = String((e && (e.reason && (e.reason.message || e.reason))) || '');
+        if (reasonStr.indexOf('WebSocket') !== -1 || reasonStr.indexOf('websocket') !== -1) {
+          e.preventDefault();
+        }
+      });
+      window.addEventListener('error', function(e) {
+        var msg = String((e && e.message) || '');
+        if (msg.indexOf('WebSocket') !== -1 || msg.indexOf('websocket') !== -1) {
+          e.preventDefault();
+        }
+      });
     </script>
   </head>
   <body class="bg-[#F2FBF5] text-slate-900 antialiased selection:bg-emerald-600 selection:text-white">

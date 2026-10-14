@@ -64,6 +64,7 @@ interface JadwalPelajaranProps {
   adminSettings?: AdminSettings;
   onSaveSchedule: (schedule: TeachingSchedule) => Promise<void> | void;
   onDeleteSchedule: (scheduleId: string) => Promise<void> | void;
+  onDeleteAllSchedules?: () => Promise<void> | void;
   onBulkSaveSchedules?: (schedules: TeachingSchedule[]) => Promise<void> | void;
   onSaveAllSchedules?: (schedules: TeachingSchedule[]) => Promise<void> | void;
   onSelectTeacher?: (teacher: Teacher) => void;
@@ -87,6 +88,7 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
   adminSettings,
   onSaveSchedule,
   onDeleteSchedule,
+  onDeleteAllSchedules,
   onBulkSaveSchedules,
   onSaveAllSchedules,
   onSelectTeacher,
@@ -118,7 +120,7 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
   const [authErrorMessage, setAuthErrorMessage] = useState('');
   const [rememberAuth, setRememberAuth] = useState(true);
   const [pendingAction, setPendingAction] = useState<{
-    type: 'edit' | 'delete' | 'add' | 'sync';
+    type: 'edit' | 'delete' | 'deleteAll' | 'add' | 'sync';
     schedule?: TeachingSchedule;
     scheduleId?: string;
     prefill?: { day?: DayOfWeek; teacherId?: string; className?: string; period?: string };
@@ -131,6 +133,10 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
   // Modal State for uploading schedule (PDF / Excel / CSV / aSc Timetables)
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [uploadModalTab, setUploadModalTab] = useState<'pdf' | 'file' | 'paste' | 'preset'>('pdf');
+
+  // Modal State for Deleting All Schedules
+  const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
 
   // Form Fields
   const [formDay, setFormDay] = useState<DayOfWeek>('Senin');
@@ -160,7 +166,7 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
 
   // Request Super Admin Auth before allowing schedule modifications
   const requestAdminAuth = (action: {
-    type: 'edit' | 'delete' | 'add' | 'sync';
+    type: 'edit' | 'delete' | 'deleteAll' | 'add' | 'sync';
     schedule?: TeachingSchedule;
     scheduleId?: string;
     prefill?: { day?: DayOfWeek; teacherId?: string; className?: string; period?: string };
@@ -179,7 +185,7 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
 
   // Execute action once authorized
   const executeAuthorizedAction = (action: {
-    type: 'edit' | 'delete' | 'add' | 'sync';
+    type: 'edit' | 'delete' | 'deleteAll' | 'add' | 'sync';
     schedule?: TeachingSchedule;
     scheduleId?: string;
     prefill?: { day?: DayOfWeek; teacherId?: string; className?: string; period?: string };
@@ -188,6 +194,8 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
       handleOpenEditModal(action.schedule);
     } else if (action.type === 'delete' && action.scheduleId) {
       setDeleteConfirmId(action.scheduleId);
+    } else if (action.type === 'deleteAll') {
+      setIsDeleteAllModalOpen(true);
     } else if (action.type === 'add') {
       handleOpenCreateModal(action.prefill);
     } else if (action.type === 'sync') {
@@ -444,6 +452,25 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
     } catch (err) {
       console.error(err);
       showToast('Gagal menghapus jadwal.');
+    }
+  };
+
+  // Delete All Schedules
+  const handleDeleteAllSchedulesConfirm = async () => {
+    setIsDeletingAll(true);
+    try {
+      if (onDeleteAllSchedules) {
+        await onDeleteAllSchedules();
+      } else if (onSaveAllSchedules) {
+        await onSaveAllSchedules([]);
+      }
+      setIsDeleteAllModalOpen(false);
+      showToast('Seluruh jadwal pelajaran berhasil dihapus dari sistem!');
+    } catch (err: any) {
+      console.error(err);
+      showToast('Gagal menghapus semua jadwal pelajaran.');
+    } finally {
+      setIsDeletingAll(false);
     }
   };
 
@@ -718,6 +745,15 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
                 <span>Muat Jadwal aSc</span>
               </button>
               <button
+                type="button"
+                onClick={() => requestAdminAuth({ type: 'deleteAll' })}
+                className="bg-rose-700 hover:bg-rose-600 active:bg-rose-800 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 shadow-xs border border-rose-500/40 transition cursor-pointer"
+                title="Hapus Seluruh Jadwal Pelajaran (Reset Bersih Matriks KBM - Perlu Kode Super Admin)"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-200" />
+                <span>Hapus Semua Jadwal</span>
+              </button>
+              <button
                 onClick={() => requestAdminAuth({ type: 'add' })}
                 className="bg-emerald-700/80 hover:bg-emerald-600 text-white font-extrabold px-3.5 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 shadow-xs border border-emerald-500/30 transition cursor-pointer"
                 title="Input Jadwal Pelajaran Baru (Perlu Kode Super Admin)"
@@ -947,6 +983,61 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
         );
       })()}
 
+      {/* Empty Schedules Banner */}
+      {schedules.length === 0 && (
+        <div className="bg-amber-50/90 border-2 border-dashed border-amber-300 rounded-3xl p-6 text-center space-y-4 shadow-2xs">
+          <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto text-amber-700">
+            <CalendarDays className="w-7 h-7" />
+          </div>
+          <div className="max-w-md mx-auto space-y-1">
+            <h3 className="text-base font-black text-amber-950">Jadwal Pelajaran Masih Kosong</h3>
+            <p className="text-xs text-amber-800 leading-relaxed">
+              Seluruh jadwal pelajaran telah dikosongkan secara bersih. Anda dapat mengunggah file PDF / Excel jadwal aSc Timetables baru, memuat jadwal contoh resmi, atau menambahkan jadwal baru secara manual.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                setUploadModalTab('pdf');
+                setIsUploadModalOpen(true);
+              }}
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold rounded-xl text-xs flex items-center space-x-1.5 shadow-xs cursor-pointer transition"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-300" />
+              <span>Upload PDF Jadwal aSc</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setUploadModalTab('file');
+                setIsUploadModalOpen(true);
+              }}
+              className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-extrabold rounded-xl text-xs flex items-center space-x-1.5 shadow-xs cursor-pointer transition"
+            >
+              <Upload className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Upload File Excel / XML</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => requestAdminAuth({ type: 'sync' })}
+              className="px-3.5 py-2 bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold rounded-xl text-xs flex items-center space-x-1.5 shadow-xs cursor-pointer transition"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-indigo-300" />
+              <span>Muat Jadwal Contoh aSc (368 Sesi)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => requestAdminAuth({ type: 'add' })}
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs flex items-center space-x-1.5 shadow-xs cursor-pointer transition"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>+ Jadwal Baru</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Mode Navigation Tabs */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-2xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
@@ -1124,6 +1215,15 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
               >
                 <FileText className="w-3.5 h-3.5 text-amber-300" />
                 <span>Upload PDF Matriks</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => requestAdminAuth({ type: 'deleteAll' })}
+                className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300 rounded-xl font-bold text-xs flex items-center space-x-1.5 shadow-2xs transition cursor-pointer"
+                title="Hapus Seluruh Jadwal Pelajaran (Reset Bersih Matriks KBM - Perlu Kode Super Admin)"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                <span>Hapus Semua Jadwal</span>
               </button>
               <div className="hidden sm:flex items-center space-x-1.5 text-[11px] text-slate-500 font-medium">
                 <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
@@ -1771,6 +1871,85 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
         );
       })()}
 
+      {/* MODAL CONFIRM DELETE ALL SCHEDULES */}
+      {isDeleteAllModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-rose-200 animate-in zoom-in-95 duration-150 space-y-4">
+            <div className="flex items-center space-x-3.5 text-rose-600">
+              <div className="w-12 h-12 rounded-2xl bg-rose-100 border border-rose-200 flex items-center justify-center shrink-0">
+                <Trash2 className="w-6 h-6 text-rose-600" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-slate-900">Hapus Semua Jadwal Pelajaran</h3>
+                <p className="text-xs text-rose-600 font-semibold">Tindakan ini permanen dan mengosongkan seluruh slot KBM</p>
+              </div>
+            </div>
+
+            <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-xs space-y-3">
+              <div className="flex items-start space-x-2 text-rose-950">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <p className="leading-relaxed font-medium">
+                  Apakah Anda yakin ingin menghapus <strong>seluruh data jadwal pelajaran</strong>?
+                  Semua sesi KBM untuk seluruh kelas (VII, VIII, IX) dan seluruh hari (Senin s/d Sabtu) akan dihapus secara bersih dari database cloud dan memori perangkat.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-rose-200 text-center">
+                <div className="bg-white rounded-xl p-2.5 border border-rose-100 shadow-2xs">
+                  <span className="block text-[10px] text-slate-500 font-bold uppercase">Total Sesi</span>
+                  <span className="text-base font-black text-rose-600">{schedules.length}</span>
+                </div>
+                <div className="bg-white rounded-xl p-2.5 border border-rose-100 shadow-2xs">
+                  <span className="block text-[10px] text-slate-500 font-bold uppercase">Guru Terdaftar</span>
+                  <span className="text-base font-black text-slate-800">
+                    {new Set(schedules.map(s => s.teacherId || s.teacherName).filter(Boolean)).size}
+                  </span>
+                </div>
+                <div className="bg-white rounded-xl p-2.5 border border-rose-100 shadow-2xs">
+                  <span className="block text-[10px] text-slate-500 font-bold uppercase">Kelas</span>
+                  <span className="text-base font-black text-slate-800">
+                    {new Set(schedules.map(s => s.className).filter(Boolean)).size}
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-slate-600 leading-snug">
+                * Setelah dihapus, matriks akan kosong bersih sehingga Anda dapat mengunggah file jadwal baru (PDF/Excel aSc) tanpa bentrok duplikasi.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end space-x-2.5 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                disabled={isDeletingAll}
+                onClick={() => setIsDeleteAllModalOpen(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-pointer transition disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={isDeletingAll}
+                onClick={handleDeleteAllSchedulesConfirm}
+                className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-black rounded-xl text-xs cursor-pointer shadow-md transition flex items-center space-x-2 disabled:opacity-50"
+              >
+                {isDeletingAll ? (
+                  <>
+                    <RotateCcw className="w-4 h-4 animate-spin text-white" />
+                    <span>Menghapus {schedules.length} Jadwal...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 text-rose-200" />
+                    <span>Ya, Hapus Semua Jadwal ({schedules.length})</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* MODAL SUPER ADMIN PIN / PASSCODE PROTECTION */}
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
@@ -1902,6 +2081,10 @@ export const JadwalPelajaran: React.FC<JadwalPelajaranProps> = ({
           semester={semester}
           initialTab={uploadModalTab}
           onImport={handleImportSchedules}
+          onDeleteAll={() => {
+            setIsUploadModalOpen(false);
+            requestAdminAuth({ type: 'deleteAll' });
+          }}
         />
       )}
 

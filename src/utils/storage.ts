@@ -870,13 +870,14 @@ export function getStoredTeachers(schoolId?: SchoolId): Teacher[] {
 
   try {
     const data = safeLocalStorageGet(storageKey);
-    const rawList: Teacher[] = data ? JSON.parse(data) : defaultTeachers;
+    const parsed = data ? JSON.parse(data) : null;
+    const rawList: Teacher[] = Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultTeachers;
     const { deduplicated } = deduplicateTeachers(rawList);
-    return deduplicated;
+    return deduplicated.length > 0 ? deduplicated : defaultTeachers;
   } catch (e) {
     console.error(e);
     const { deduplicated } = deduplicateTeachers(defaultTeachers);
-    return deduplicated;
+    return deduplicated.length > 0 ? deduplicated : defaultTeachers;
   }
 }
 
@@ -884,7 +885,8 @@ export function saveTeachers(teachers: Teacher[], schoolId?: SchoolId): void {
   const activeId = schoolId || getActiveSchoolId();
   const storageKey = getSchoolStorageKey('teachers', activeId);
   try {
-    const { deduplicated } = deduplicateTeachers(teachers);
+    const listToSave = Array.isArray(teachers) && teachers.length > 0 ? teachers : INITIAL_TEACHERS;
+    const { deduplicated } = deduplicateTeachers(listToSave);
     safeLocalStorageSet(storageKey, JSON.stringify(deduplicated));
   } catch (e) {
     console.error(e);
@@ -898,7 +900,8 @@ export function getStoredSubjects(schoolId?: SchoolId): Subject[] {
 
   try {
     const data = safeLocalStorageGet(storageKey);
-    return data ? JSON.parse(data) : defaultSubjects;
+    const parsed = data ? JSON.parse(data) : null;
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultSubjects;
   } catch (e) {
     console.error(e);
     return defaultSubjects;
@@ -1185,13 +1188,16 @@ export function getStoredSchedules(schoolId?: SchoolId): TeachingSchedule[] {
   try {
     const data = safeLocalStorageGet(storageKey);
     let list: TeachingSchedule[] = [];
-    if (data) {
-      const parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        list = parsed;
+    if (data !== null && data !== undefined) {
+      try {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed)) {
+          list = parsed;
+        }
+      } catch (_) {
+        list = defaultSchedules;
       }
-    }
-    if (list.length === 0) {
+    } else {
       list = defaultSchedules;
     }
 

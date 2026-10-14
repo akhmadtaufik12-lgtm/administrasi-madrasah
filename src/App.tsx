@@ -121,6 +121,7 @@ import {
   saveScheduleToFirebase,
   deleteScheduleFromFirebase,
   saveAllSchedulesToFirebase,
+  deleteAllSchedulesFromFirebase,
   subscribeAnnouncements,
   saveAnnouncementsToFirebase,
   subscribeInventory,
@@ -468,13 +469,15 @@ export default function App() {
   const [activeTeacher, setActiveTeacher] = useState<Teacher | null>(() => {
     const sid = getActiveSchoolId();
     const storedList = getStoredTeachers(sid);
+    const list = storedList.length > 0 ? storedList : INITIAL_TEACHERS;
     const activeTid = getActiveTeacherId(sid);
-    return storedList.find(t => t.id === activeTid) || storedList[0] || null;
+    return list.find(t => t.id === activeTid) || list[0] || INITIAL_TEACHERS[0];
   });
   const [activeSubject, setActiveSubject] = useState<Subject | null>(() => {
     const sid = getActiveSchoolId();
     const storedSubjects = getStoredSubjects(sid);
-    return storedSubjects[0] || null;
+    const list = storedSubjects.length > 0 ? storedSubjects : INITIAL_SUBJECTS;
+    return list[0] || INITIAL_SUBJECTS[0];
   });
   const [activeClass, setActiveClass] = useState<string>(() => {
     const list = getClassesForSchool(getActiveSchoolId());
@@ -651,13 +654,15 @@ export default function App() {
 
     const unsubscribeTeachers = subscribeTeachers(
       (realtimeTeachers) => {
-        const { deduplicated } = deduplicateTeachers(realtimeTeachers);
-        setTeachers(deduplicated);
-        saveTeachers(deduplicated);
+        const safeTeachers = realtimeTeachers.length > 0 ? realtimeTeachers : INITIAL_TEACHERS;
+        const { deduplicated } = deduplicateTeachers(safeTeachers);
+        const finalList = deduplicated.length > 0 ? deduplicated : INITIAL_TEACHERS;
+        setTeachers(finalList);
+        saveTeachers(finalList);
         setActiveTeacher((prev) => {
-          if (!prev) return deduplicated[0] || null;
-          const matched = deduplicated.find(t => t.id === prev.id || t.name === prev.name);
-          return matched || deduplicated[0] || prev;
+          if (!prev) return finalList[0];
+          const matched = finalList.find(t => t.id === prev.id || t.name === prev.name);
+          return matched || finalList[0];
         });
       },
       (err) => handleSubError('teachers', err)
@@ -665,8 +670,14 @@ export default function App() {
 
     const unsubscribeSubjects = subscribeSubjects(
       (realtimeSubjects) => {
-        setSubjects(realtimeSubjects);
-        saveSubjects(realtimeSubjects);
+        const safeSubjects = realtimeSubjects.length > 0 ? realtimeSubjects : INITIAL_SUBJECTS;
+        setSubjects(safeSubjects);
+        saveSubjects(safeSubjects);
+        setActiveSubject((prev) => {
+          if (!prev) return safeSubjects[0];
+          const matched = safeSubjects.find(s => s.id === prev.id || s.name === prev.name);
+          return matched || safeSubjects[0];
+        });
       },
       (err) => handleSubError('subjects', err)
     );
@@ -1784,11 +1795,22 @@ export default function App() {
 
   const handleSaveAllSchedules = async (updatedSchedules: TeachingSchedule[]) => {
     setSchedules(updatedSchedules);
-    saveSchedules(updatedSchedules);
+    saveSchedules(updatedSchedules, activeSchoolId);
     try {
-      await saveAllSchedulesToFirebase(updatedSchedules);
+      await saveAllSchedulesToFirebase(updatedSchedules, true);
     } catch (e) {
       console.error('Failed to sync all schedules to Firebase:', e);
+    }
+  };
+
+  const handleDeleteAllSchedules = async () => {
+    setSchedules([]);
+    saveSchedules([], activeSchoolId);
+    try {
+      await deleteAllSchedulesFromFirebase();
+    } catch (e) {
+      console.error('Failed to delete all schedules from Firebase:', e);
+      throw e;
     }
   };
 
@@ -2376,18 +2398,11 @@ export default function App() {
     );
   }
 
-  if (!activeTeacher || !activeSubject) {
-    return (
-      <div className="h-screen bg-indigo-950 flex items-center justify-center text-white p-4">
-        <div className="text-center space-y-3">
-          <div className="w-10 h-10 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="font-bold text-xs uppercase tracking-wider text-indigo-200">
-            Memuat Sistem Administrasi {currentSchool.shortName}...
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Guard against missing activeTeacher or activeSubject to guarantee instant zero-wait startup
+  const effectiveTeacher = activeTeacher || teachers[0] || INITIAL_TEACHERS[0];
+  const effectiveSubject = activeSubject || subjects[0] || INITIAL_SUBJECTS[0];
+
+  // Zero-wait fallback guarantees the UI is rendered immediately without blocking loading screens
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-slate-50 font-sans text-slate-800 antialiased">
@@ -2574,6 +2589,7 @@ export default function App() {
                 semester={academicSettings.semester}
                 onSaveSchedule={handleSaveSchedule}
                 onDeleteSchedule={handleDeleteSchedule}
+                onDeleteAllSchedules={handleDeleteAllSchedules}
                 onSaveAllSchedules={handleSaveAllSchedules}
                 onBulkSaveSchedules={handleSaveAllSchedules}
                 onSelectTeacher={(t) => {

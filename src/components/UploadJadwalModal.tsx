@@ -21,7 +21,8 @@ import {
   ClipboardPaste,
   ShieldAlert,
   CalendarDays,
-  FileText
+  FileText,
+  Trash2
 } from 'lucide-react';
 import { TeachingSchedule, Teacher, Subject, DayOfWeek } from '../types';
 import { DAYS_OF_WEEK, STANDARD_SCHEDULE_PERIODS, CLASSES_LIST } from '../data/initialData';
@@ -40,6 +41,7 @@ interface UploadJadwalModalProps {
   semester?: string;
   initialTab?: 'pdf' | 'file' | 'paste' | 'preset';
   onImport: (newSchedules: TeachingSchedule[], mode: 'replace' | 'merge') => Promise<void> | void;
+  onDeleteAll?: () => void;
 }
 
 // Normalized Subject dictionary for intelligent auto-matching
@@ -130,7 +132,8 @@ export const UploadJadwalModal: React.FC<UploadJadwalModalProps> = ({
   academicYear = '2026/2027',
   semester = 'Semester Ganjil',
   initialTab = 'pdf',
-  onImport
+  onImport,
+  onDeleteAll
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
@@ -1434,13 +1437,27 @@ export const UploadJadwalModal: React.FC<UploadJadwalModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
-            title="Tutup Modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            {currentSchedules.length > 0 && onDeleteAll && (
+              <button
+                type="button"
+                onClick={onDeleteAll}
+                className="bg-rose-500/25 hover:bg-rose-500/40 text-rose-100 border border-rose-400/40 text-xs font-black px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 cursor-pointer"
+                title="Hapus / Kosongkan semua jadwal yang ada saat ini sebelum impor"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-300" />
+                <span className="hidden sm:inline">Hapus Semua Jadwal ({currentSchedules.length})</span>
+                <span className="sm:hidden">Hapus Semua</span>
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+              title="Tutup Modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Modal Body */}

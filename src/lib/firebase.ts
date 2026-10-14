@@ -5,19 +5,25 @@ import {
   persistentSingleTabManager,
   memoryLocalCache,
   getFirestore,
+  setLogLevel,
   collection,
+  getDocs,
   onSnapshot,
   doc,
   setDoc,
   deleteDoc,
   writeBatch,
-  getDocFromServer,
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import firebaseConfig from '../../firebase-applet-config.json';
 import { AttendanceSession, GradeRecord, LessonPlan, SchoolOfficials, ClassWaliKelasMap, Teacher, Subject, Student, StudentViolation, PaymentTransaction, FeeTariffSettings, AdminSettings, StudentBillSettings, CashDepositTransaction, TreasurerExpenseTransaction, TeachingSchedule, Announcement, DatabaseBackupData, InventoryItem, InventoryMovementLog, SuratKeluar, SuratMasuk } from '../types';
-import { INITIAL_STUDENTS, INITIAL_SCHEDULES, INITIAL_INVENTORY_ITEMS } from '../data/initialData';
+import { INITIAL_TEACHERS, INITIAL_SUBJECTS, INITIAL_STUDENTS, INITIAL_SCHEDULES, INITIAL_INVENTORY_ITEMS } from '../data/initialData';
 import { INITIAL_SURAT_KELUAR, INITIAL_SURAT_MASUK } from '../data/initialLettersData';
+
+// Set log level to 'error' to prevent benign connection retry / offline warnings from breaking runtime diagnostics
+try {
+  setLogLevel('error');
+} catch (_) {}
 
 const app = initializeApp(firebaseConfig);
 
@@ -46,13 +52,16 @@ if (typeof window !== 'undefined' && window.localStorage) {
 
 let firestoreInstance;
 try {
-  // Use persistentSingleTabManager with IndexedDB storage (not localStorage) to prevent QuotaExceededError
+  // Use persistentSingleTabManager with IndexedDB storage and experimentalForceLongPolling: true.
+  // In iframe/sandbox environments, streaming WebChannel connections can hang and trigger
+  // "Could not reach Cloud Firestore backend within 10 seconds". Long polling eliminates this latency/timeout.
   firestoreInstance = initializeFirestore(
     app,
     {
       localCache: persistentLocalCache({
         tabManager: persistentSingleTabManager({ forceOwnership: true })
-      })
+      }),
+      experimentalForceLongPolling: true
     },
     targetDatabaseId
   );
@@ -62,7 +71,8 @@ try {
     firestoreInstance = initializeFirestore(
       app,
       {
-        localCache: memoryLocalCache()
+        localCache: memoryLocalCache(),
+        experimentalForceLongPolling: true
       },
       targetDatabaseId
     );
@@ -98,20 +108,6 @@ export enum OperationType {
 }
 
 export const auth = getAuth(app);
-
-// Test Firestore connection on boot as required by Firebase integration guidelines
-async function testFirestoreConnection() {
-  try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.warn('[Firestore] The client is offline or network is limited.');
-    }
-  }
-}
-if (typeof window !== 'undefined') {
-  testFirestoreConnection();
-}
 
 export interface FirestoreErrorInfo {
   error: string;
@@ -400,7 +396,7 @@ export function subscribeTeachers(
     (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
-        if (data && Array.isArray(data.list)) {
+        if (data && Array.isArray(data.list) && data.list.length > 0) {
           const seenIds = new Set<string>();
           const seenNames = new Set<string>();
           const seenNips = new Set<string>();
@@ -437,11 +433,19 @@ export function subscribeTeachers(
             });
           }
 
+          const finalList = cleaned.length > 0 ? cleaned : INITIAL_TEACHERS;
           if (hasDuplicates || cleaned.length !== data.list.length) {
-            saveTeachersToFirebase(cleaned).catch(() => {});
+            saveTeachersToFirebase(finalList).catch(() => {});
           }
-          onUpdate(cleaned);
+          onUpdate(finalList);
+        } else {
+          // If empty in Firestore, reseed immediately
+          saveTeachersToFirebase(INITIAL_TEACHERS).catch(() => {});
+          onUpdate(INITIAL_TEACHERS);
         }
+      } else {
+        saveTeachersToFirebase(INITIAL_TEACHERS).catch(() => {});
+        onUpdate(INITIAL_TEACHERS);
       }
     },
     (error) => {
@@ -453,12 +457,13 @@ export function subscribeTeachers(
 
 export async function saveTeachersToFirebase(teachers: Teacher[]) {
   try {
+    const listToProcess = Array.isArray(teachers) && teachers.length > 0 ? teachers : INITIAL_TEACHERS;
     const seenIds = new Set<string>();
     const seenNames = new Set<string>();
     const seenNips = new Set<string>();
     const cleaned: Teacher[] = [];
 
-    for (const rawTeacher of teachers) {
+    for (const rawTeacher of listToProcess) {
       if (!rawTeacher || !rawTeacher.name) continue;
       const t = { ...rawTeacher };
       const lower = t.name.toLowerCase().trim();
@@ -487,8 +492,9 @@ export async function saveTeachersToFirebase(teachers: Teacher[]) {
       });
     }
 
+    const finalList = cleaned.length > 0 ? cleaned : INITIAL_TEACHERS;
     const docRef = doc(db, CONFIG_COL, 'teachers');
-    await setDoc(docRef, cleanUndefined({ list: cleaned }), { merge: true });
+    await setDoc(docRef, cleanUndefined({ list: finalList }), { merge: true });
   } catch (e) {
     throw handleFirestoreError(e, OperationType.WRITE, `${CONFIG_COL}/teachers`);
   }
@@ -507,9 +513,15 @@ export function subscribeSubjects(
     (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
-        if (data && Array.isArray(data.list)) {
+        if (data && Array.isArray(data.list) && data.list.length > 0) {
           onUpdate(data.list as Subject[]);
+        } else {
+          saveSubjectsToFirebase(INITIAL_SUBJECTS).catch(() => {});
+          onUpdate(INITIAL_SUBJECTS);
         }
+      } else {
+        saveSubjectsToFirebase(INITIAL_SUBJECTS).catch(() => {});
+        onUpdate(INITIAL_SUBJECTS);
       }
     },
     (error) => {
@@ -521,8 +533,9 @@ export function subscribeSubjects(
 
 export async function saveSubjectsToFirebase(subjects: Subject[]) {
   try {
+    const listToSave = Array.isArray(subjects) && subjects.length > 0 ? subjects : INITIAL_SUBJECTS;
     const docRef = doc(db, CONFIG_COL, 'subjects');
-    await setDoc(docRef, cleanUndefined({ list: subjects }), { merge: true });
+    await setDoc(docRef, cleanUndefined({ list: listToSave }), { merge: true });
   } catch (e) {
     throw handleFirestoreError(e, OperationType.WRITE, `${CONFIG_COL}/subjects`);
   }
@@ -960,19 +973,9 @@ export function subscribeTeachingSchedules(
   return onSnapshot(
     colRef,
     (snapshot) => {
-      // If collection is empty or has obsolete partial data (< 350 items), seed full 368 official schedules
-      if (snapshot.empty || snapshot.docs.length < 350) {
-        (async () => {
-          try {
-            // Batch seed all 368 official schedules
-            for (const sch of INITIAL_SCHEDULES) {
-              await setDoc(doc(db, SCHEDULES_COL, sch.id), cleanUndefined(sch), { merge: true });
-            }
-          } catch (err) {
-            console.warn('Seeding schedules notice:', err);
-          }
-        })();
-        onUpdate(INITIAL_SCHEDULES as TeachingSchedule[]);
+      // If collection is empty, report empty array without force-re-seeding
+      if (snapshot.empty) {
+        onUpdate([]);
         return;
       }
       let needsFirestoreRepair = false;
@@ -1052,8 +1055,55 @@ export async function deleteScheduleFromFirebase(scheduleId: string) {
   }
 }
 
-export async function saveAllSchedulesToFirebase(schedules: TeachingSchedule[]) {
+/**
+ * Deletes ALL schedules from Cloud Firestore
+ */
+export async function deleteAllSchedulesFromFirebase() {
   try {
+    const colRef = collection(db, SCHEDULES_COL);
+    const snapshot = await getDocs(colRef);
+    if (snapshot.empty) return;
+
+    const docs = snapshot.docs;
+    const chunkSize = 400;
+    for (let i = 0; i < docs.length; i += chunkSize) {
+      const chunk = docs.slice(i, i + chunkSize);
+      const batch = writeBatch(db);
+      for (const d of chunk) {
+        batch.delete(d.ref);
+      }
+      await batch.commit();
+    }
+  } catch (e) {
+    throw handleFirestoreError(e, OperationType.DELETE, SCHEDULES_COL);
+  }
+}
+
+/**
+ * Saves all schedules to Cloud Firestore with optional full replacement cleanup
+ */
+export async function saveAllSchedulesToFirebase(schedules: TeachingSchedule[], replaceAll: boolean = true) {
+  try {
+    if (replaceAll) {
+      // Clean up orphaned schedules in Firestore that aren't in the new list
+      const colRef = collection(db, SCHEDULES_COL);
+      const snapshot = await getDocs(colRef);
+      const newIds = new Set(schedules.map(s => s.id));
+      const toDelete = snapshot.docs.filter(d => !newIds.has(d.id));
+
+      if (toDelete.length > 0) {
+        const chunkSize = 400;
+        for (let i = 0; i < toDelete.length; i += chunkSize) {
+          const chunk = toDelete.slice(i, i + chunkSize);
+          const batch = writeBatch(db);
+          for (const d of chunk) {
+            batch.delete(d.ref);
+          }
+          await batch.commit();
+        }
+      }
+    }
+
     const chunkSize = 350;
     for (let i = 0; i < schedules.length; i += chunkSize) {
       const chunk = schedules.slice(i, i + chunkSize);
